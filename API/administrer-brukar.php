@@ -16,18 +16,19 @@ if ($_SERVER["REQUEST_METHOD"] === "PUT") {
     }
 
     // Sjekker om brukaren er administrator
-    if (!in_array($token, ADMIN_TOKENS)) {
-           // Sjekk at epost, gamalt passord og nytt passord er satt for ikkje-administrator
-        if (empty($data["epost"]) || empty($data["passord"] || empty([$data["nyttPassord"]]))) {
-            http_response_code(400); // Bad Request
-            echo json_encode(["error" => "E-postadresse, gamalt passord og nytt passord er påkravd."]);
-            exit();
-        } 
-    } else {
+    if (in_array($token, ADMIN_TOKENS)) {
         // Sjekk at epost og nytt passord er satt for administrator
         if (empty($data["epost"]) || empty($data["nyttPassord"])) {
             http_response_code(400); // Bad Request
             echo json_encode(["error" => "E-postadresse og nytt passord er påkravd."]);
+            exit();
+        } 
+
+    } else {
+        // Sjekk at epost, gamalt passord og nytt passord er satt for ikkje-administrator
+        if (empty($data["epost"]) || empty($data["passord"] || empty([$data["nyttPassord"]]))) {
+            http_response_code(400); // Bad Request
+            echo json_encode(["error" => "E-postadresse, gamalt passord og nytt passord er påkravd."]);
             exit();
         } 
     }
@@ -48,18 +49,18 @@ if ($_SERVER["REQUEST_METHOD"] === "PUT") {
     $sth->execute([$data["epost"]]);
     $brukar = $sth->fetch(PDO::FETCH_ASSOC);
 
-    if (!in_array($token, ADMIN_TOKENS)) {
+    if (in_array($token, ADMIN_TOKENS)) {
+        // Sjekker at brukaren finst
+        if ($brukar == false) {
+            http_response_code(400); // Bad Request
+            echo json_encode(["error" => "Ugyldig e-postadresse."]);
+            exit();
+        }
+    } else {
         // Sjekker at brukaren finst og at passord matcher
         if ($brukar == false || !password_verify($data["passord"], $brukar["passord_hash"])) {
             http_response_code(401); // Unauthorized
             echo json_encode(["error" => "Ugyldig e-postadresse eller passord."]);
-            exit();
-        }
-    } else {
-        // Sjekker at brukaren finst
-        if ($brukar == false) {
-            http_response_code(400); // Unauthorized
-            echo json_encode(["error" => "Ugyldig e-postadresse."]);
             exit();
         }
     }
