@@ -1,7 +1,7 @@
 <?php
 
 // Køyr tokenautentisering
-require_once 'inkluderer/autentisering.php';
+require_once "inkluderer/autentisering.php";
 
 // Sjekk om token er administrator
 if (!in_array($token, ADMIN_TOKENS)) {
@@ -18,19 +18,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Sjekk at data er satt
     if (empty($data)) {
         http_response_code(400); // Bad Request
-        echo json_encode(['error' => 'Ingen data mottatt.']);
+        echo json_encode(["error" => "Ingen data mottatt."]);
         exit();
     }
 
     // Sjekk at epost og passord er satt
     if (empty($data["epost"]) || empty($data["passord"])) {
         http_response_code(400); // Bad Request
-        echo json_encode(['error' => 'E-postadresse og passord er påkravd.']);
+        echo json_encode(["error" => "E-postadresse og passord er påkravd."]);
         exit();
     }
 
     // Lag databasen om den ikkje finst og få tilgang til den
-    require_once 'inkluderer/lag-database.php';
+    require_once "inkluderer/lag-database.php";
 
     // Hasher passord for økt sikkerheit
     $hash = password_hash($data["passord"], PASSWORD_DEFAULT);
@@ -46,15 +46,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         if($sth->execute([$data["epost"], $hash])) {
             http_response_code(201); // Created
-            echo json_encode(['message' => 'Brukar oppretta.']);
+            echo json_encode(["message" => "Brukar oppretta."]);
         } else {
             http_response_code(500); // Internal Server Error
-            echo json_encode(['error' => 'Feil under lagring av brukar.']);
+            echo json_encode(["error" => "Feil under lagring av brukar."]);
         }
 
     } catch (PDOException $feil) {
         // Håndtere databasefeil
         http_response_code(500); // Internal Server Error
-        echo json_encode(['error' => 'Databasefeil: ' . $feil->getMessage()]);
+        echo json_encode(["error" => "Databasefeil: " . $feil->getMessage()]);
     }   
 }
