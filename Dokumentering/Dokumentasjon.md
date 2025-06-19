@@ -475,3 +475,30 @@ if ($_SERVER["REQUEST_METHOD"] === "PUT") {
     }
 }
 ```
+
+//TODO Fikse litt kommentarar i eksempelkoden
+
+Det første eg lagar er å prosessen for å endre passord. Det er to måtar å endre et passord på:
+
+-   Brukar endrer passordet sjølv. Då må brukaren skrive inn det gamle passordet i tillegg for autentisering.
+
+-   Administrator setter nytt passord på ein brukar. Då trengs bare e-postadressa og det nye passordet.
+
+For å skille på desse må skriptet sjekke om brukaren er administrator eller ikkje. Det gjør den via tokens. Det er definert kva tokens som har administratorrettar og kva tokens som berre er vanlege brukarar.
+
+```php
+// Administrator
+define("ADMIN_TOKENS", [
+    "87y90br8732gf97f2121hfdkl8i"
+]);
+
+// Alle gyldige tokens
+define("TOKENS", [
+    ...ADMIN_TOKENS,
+    "uav0por0s32kf90mao20c05jc43"
+]);
+```
+
+`...ADMIN_TOKENS` legger alle administratortokens inn i arrayen med alle tokens slik at ein slepp å spesifisere det på nytt.
+
+//TODO: Legg til kode for endre passord og sletting. Beskriv endringane som er gjort frå forige endepunkt.

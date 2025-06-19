@@ -54,3 +54,4 @@
 | 11:10 - 11:20    | Testing og feilsøking av endepunkt                                                      |
 | 11:20 - 11:30    | Prat med Ole                                                                            |
 | 11:30 - 12:10    | Lunsj                                                                                   |
+| 12:10 - 12:30    | Dokumentere endepunkt                                                                   |
