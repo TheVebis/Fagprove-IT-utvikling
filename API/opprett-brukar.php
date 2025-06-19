@@ -1,7 +1,7 @@
 <?php
 
 // Kjør tokenautentisering
-require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'inkluderer/autentisering.php';
+require_once 'inkluderer/autentisering.php';
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Hent data frå forespørselen

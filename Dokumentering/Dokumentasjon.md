@@ -124,7 +124,7 @@ Dokumentering og gå gjennom oppgåver inkluderer å ferdigstille ting eg eventu
 
 # Gjennomføring
 
-### Onsdag 18.6
+# Onsdag 18.6
 
 ## Database
 
@@ -406,3 +406,72 @@ fetch("/API/opprett-brukar.php", {
     > Databasefeil: SQLSTATE[23000]: Integrity constraint violation: 19 UNIQUE constraint failed: brukarkontoar.epost
 
     Dette skjer fordi det finst allereie ein brukar med epost `eksempel@fagprøve.no`
+
+# Torsdag 19.6
+
+## Laste opp på GitHub
+
+Eg blei råda av Terje Rudi å ta backup av prosjektet mitt på GitHub, då det ville vere veldig kjipt om noko sku gå gale og alt arbeidet mitt blei sletta. Med GitHub har eg og ein versjonslogg, så om noko sku gå gale i programmet så kan eg gå tilbake til ein tidligare versjon.
+
+### Kva er GitHub?
+
+Som eg skreiv i planlegginga mi er GitHub ein plattform for utviklarar som brukast til å lagra, administrere og dele kodeprosjekt.
+
+//TODO: Skrive meir om GitHub.
+
+### Laste opp på GitHub med VS Code
+
+I Visual Studio Code, som er verktøyet eg bruker for å skrive koden min, er det integrert GIT Source Control som gjer det enkelt å laste opp prosjekt-mappa i eit GitHub-repository. Vidare får eg oversikt over endringar sidan forige commit, moglegheita å commite dei endringane, og få ein oversikt over dei forskjellege versjonane.
+
+Hadde eg hatt fleire utviklarar med meg kunne dei ha lagd branches og seinare sendt pull requests med den nye koden utan at eg blir forstyrra i arbeidet mitt av endringar.
+
+Så med Source Control i VS Code var det berre å trykke på nokon knappar, logge meg inn på GitHub, og vipps så har eg koden min oppe på GitHub.
+
+![GitHub](Bilder/GitHub.png)
+
+## Administrasjon av brukar
+
+Eit av endepunkta til REST-APIet er at ein skal kunne administrere brukarar. Då er planen min at ein skal kunne endre passord, sette nytt passord og slette brukaren.
+
+Eg kopierer ein del av koden frå opprett brukar-endepunktet då mykje av prosessen er den same.
+
+```php
+// Kjør tokenautentisering
+require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'inkluderer/autentisering.php';
+
+if ($_SERVER["REQUEST_METHOD"] === "PUT") {
+    // Hent data frå forespørselen
+    $json = file_get_contents("php://input");
+    $data = json_decode($json, true);
+
+    // Sjekk at data er satt
+    if (empty($data)) {
+        http_response_code(400); // Bad Request
+        echo json_encode(['error' => 'Ingen data mottatt.']);
+        exit();
+    }
+
+    // Lag databasen om den ikkje finst og få tilgang til den
+    require_once 'lag-database.php';
+
+    try {
+        // Sett ny brukar inn i databasen med epost og hasha passord
+        $sth = $dbh->prepare(
+
+        );
+
+        if($sth->execute()) {
+            http_response_code(); //
+            echo json_encode(['message' => '']);
+        } else {
+            http_response_code(500); // Internal Server Error
+            echo json_encode(['error' => 'Feil under lagring av brukar.']);
+        }
+
+    } catch (PDOException $feil) {
+        // Håndtere databasefeil
+        http_response_code(500); // Internal Server Error
+        echo json_encode(['error' => 'Databasefeil: ' . $feil->getMessage()]);
+    }
+}
+```

@@ -43,3 +43,7 @@
 | **Torsdag 19.6** |
 | 08:00 - 08:15    | Starte dagen                                                                            |
 | 08:15 - 08:20    | Lage kakao                                                                              |
+| 08:20 - 08:30    | Starte med endepunktet for administrasjon av brukar                                     |
+| 08:30 - 08:45    | Laste opp prosjektet til GitHub                                                         |
+| 08:45 - 09:10    | Dokumentere om GitHub                                                                   |
+| 09:10 - 10:20    | Lage endepunkt for administrasjon av brukar                                             |

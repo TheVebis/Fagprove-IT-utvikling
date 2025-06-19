@@ -1,9 +1,9 @@
 <?php
 
 // Kjør tokenautentisering
-require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'inkluderer/autentisering.php';
+require_once 'inkluderer/autentisering.php';
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
+if ($_SERVER["REQUEST_METHOD"] === "PUT") {
     // Hent data frå forespørselen
     $json = file_get_contents("php://input");
     $data = json_decode($json, true);
@@ -15,34 +15,74 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit();
     }
 
-    // Sjekk at epost og passord er satt
-    if (empty($data["epost"]) || empty($data["passord"])) {
-        http_response_code(400); // Bad Request
-        echo json_encode(['error' => 'E-postadresse og passord er påkrevd.']);
-        exit();
+    // Sjekker om brukaren er administrator
+    if (!in_array($token, ADMIN_TOKENS)) {
+           // Sjekk at epost, gamalt passord og nytt passord er satt for ikkje-administrator
+        if (empty($data["epost"]) || empty($data["passord"] || empty([$data["nyttPassord"]]))) {
+            http_response_code(400); // Bad Request
+            echo json_encode(['error' => 'E-postadresse, gamalt passord og nytt passord er påkrevd.']);
+            exit();
+        } 
+    } else {
+        // Sjekk at epost og nytt passord er satt for administrator
+        if (empty($data["epost"]) || empty($data["nyttPassord"])) {
+            http_response_code(400); // Bad Request
+            echo json_encode(['error' => 'E-postadresse og nytt passord er påkrevd.']);
+            exit();
+        } 
     }
 
-    // Lag databasen om den ikkje finst
-    require_once 'lag-database.php';
+    // Lag databasen om den ikkje finst og få tilgang til den
+    require_once 'inkluderer/lag-database.php';
+
+    // Henter brukaren frå databasen
+    $sth = $dbh->prepare(
+        <<<SQL
+            SELECT passord_hash
+            FROM brukarkontoar
+            WHERE 
+                epost LIKE ?
+                
+        SQL
+    );
+    $sth->execute([$data["epost"]]);
+    $brukar = $sth->fetch(PDO::FETCH_ASSOC);
+
+    if (!in_array($token, ADMIN_TOKENS)) {
+        // Sjekker at brukaren finst og at passord matcher
+        if ($brukar == false || !password_verify($data["passord"], $brukar["passord_hash"])) {
+            http_response_code(401); // Unauthorized
+            echo json_encode(['error' => 'Ugyldig e-postadresse eller passord.']);
+            exit();
+        }
+    } else {
+        // Sjekker at brukaren finst
+        if ($brukar == false) {
+            http_response_code(400); // Unauthorized
+            echo json_encode(['error' => 'Ugyldig e-postadresse.']);
+            exit();
+        }
+    }
 
     // Hasher passord for økt sikkerheit
-    $hash = password_hash($data["passord"], PASSWORD_DEFAULT);
+    $hash = password_hash($data["nyttPassord"], PASSWORD_DEFAULT);
 
     try {
         // Sett ny brukar inn i databasen med epost og hasha passord
         $sth = $dbh->prepare(
             <<<SQL
-                INSERT INTO brukarkontoar (epost, passord_hash)
-                VALUES (?, ?)
+                UPDATE brukarkontoar 
+                SET passord_hash = ?
+                WHERE epost = ?
             SQL
         );
 
-        if($sth->execute([$data["epost"], $hash])) {
-            http_response_code(201); // Created
-            echo json_encode(['message' => 'Brukar oppretta.']);
+        if($sth->execute([$hash, $data["epost"],])) {
+            http_response_code(200); // OK
+            echo json_encode(['message' => 'Nytt passord er satt.']);
         } else {
             http_response_code(500); // Internal Server Error
-            echo json_encode(['error' => 'Feil under lagring av brukar.']);
+            echo json_encode(['error' => 'Feil under setting av passord.']);
         }
 
     } catch (PDOException $feil) {
