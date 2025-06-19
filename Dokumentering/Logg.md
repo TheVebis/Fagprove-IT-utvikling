@@ -55,3 +55,10 @@
 | 11:20 - 11:30    | Prat med Ole                                                                            |
 | 11:30 - 12:10    | Lunsj                                                                                   |
 | 12:10 - 12:30    | Dokumentere endepunkt                                                                   |
+| 12:30 - 12:50    | Lage endepunkt for oversikt av brukarar                                                 |
+| 12:50 - 13:00    | Teste og feilsøke endepunkt                                                             |
+| 13:00 - 13:10    | Kort pause                                                                              |
+| 13:10 - 13:50    | Dokumentere endepunkt for administrasjon av brukar                                      |
+| 13:50 - 13:55    | Samtale med prøvenemnda om endringar                                                    |
+| 13:55 - 14:10    | Hente og spise mat frå koldtbord etter arrangement i kantina                            |
+| 14:10 - 15:00    | Dokumentere endepunkt                                                                   |

@@ -132,7 +132,7 @@ Eg byrjar med å sette opp SQLite-databasen som skal lagre alle brukarkontoane. 
 
 ```php
 // Banen til databasen
-$dsn = 'sqlite:' . dirname(__DIR__) . DIRECTORY_SEPARATOR . './database.sqlite3';
+$dsn = "sqlite:" . dirname(__DIR__) . DIRECTORY_SEPARATOR . "./database.sqlite3";
 $dbh = new PDO($dsn);
 
 // Lager tabellen brukarkontoar
@@ -150,7 +150,7 @@ $dbh->query(
 
 Forklaring av koden:
 
-`$dsn = 'sqlite:' . dirname(__DIR__) . DIRECTORY_SEPARATOR . './database.sqlite3';`
+`$dsn = "sqlite:" . dirname(__DIR__) . DIRECTORY_SEPARATOR . "./database.sqlite3";`
 
 Koden begynner med å definere ein variabel `$dsn`, som skal spesifisere banen til databasen.
 
@@ -237,7 +237,7 @@ Eit av endepunkta til APIet er at ein skal kunne opprette brukarar i databasen.
 
 ```php
 // Kjør tokenautentisering
-require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'inkluderer/autentisering.php';
+require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . "inkluderer/autentisering.php";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Hent data frå føre­spurnaden
@@ -248,7 +248,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if (!empty($data)) {
         if (!empty($data["epost"]) && !empty($data["passord"])) {
             // Lag databasen om den ikkje finst
-            require_once 'lag-database.php';
+            require_once "lag-database.php";
 
             // Hasher passord for økt sikkerheit
             $hash = password_hash($data["passord"], PASSWORD_DEFAULT);
@@ -268,7 +268,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 Forklaring av koden:
 
-`require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'inkluderer/autentisering.php';`
+`require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . "inkluderer/autentisering.php";`
 køyrer autentiseringscriptet eg satt opp tidligare. Det passer på at føre­spurnaden har eit gyldig token.
 
 `$_SERVER["REQUEST_METHOD"] === "POST"`
@@ -325,7 +325,7 @@ Eg innsåg det kunne være ein ide å legge til feilmeldingar i koden for ein be
 
 ```php
 // Kjør tokenautentisering
-require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'inkluderer/autentisering.php';
+require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . "inkluderer/autentisering.php";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Hent data frå forespørselen
@@ -335,19 +335,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Sjekk at data er satt
     if (empty($data)) {
         http_response_code(400); // Bad Request
-        echo json_encode(['error' => 'Ingen data mottatt.']);
+        echo json_encode(["error" => "Ingen data mottatt."]);
         exit();
     }
 
     // Sjekk at epost og passord er satt
     if (empty($data["epost"]) || empty($data["passord"])) {
         http_response_code(400); // Bad Request
-        echo json_encode(['error' => 'E-postadresse og passord er påkravd.']);
+        echo json_encode(["error" => "E-postadresse og passord er påkravd."]);
         exit();
     }
 
     // Lag databasen om den ikkje finst
-    require_once 'lag-database.php';
+    require_once "lag-database.php";
 
     // Hasher passord for økt sikkerheit
     $hash = password_hash($data["passord"], PASSWORD_DEFAULT);
@@ -363,16 +363,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         if($sth->execute([$data["epost"], $hash])) {
             http_response_code(201); // Created
-            echo json_encode(['message' => 'Brukar oppretta.']);
+            echo json_encode(["message" => "Brukar oppretta."]);
         } else {
             http_response_code(500); // Internal Server Error
-            echo json_encode(['error' => 'Feil under lagring av brukar.']);
+            echo json_encode(["error" => "Feil under lagring av brukar."]);
         }
 
     } catch (PDOException $feil) {
         // Håndtere databasefeil
         http_response_code(500); // Internal Server Error
-        echo json_encode(['error' => 'Databasefeil: ' . $feil->getMessage()]);
+        echo json_encode(["error" => "Databasefeil: " . $feil->getMessage()]);
     }
 }
 ```
@@ -431,13 +431,13 @@ Så med Source Control i VS Code var det berre å trykke på nokon knappar, logg
 
 ## Administrasjon av brukar
 
-Eit av endepunkta til REST-APIet er at ein skal kunne administrere brukarar. Då er planen min at ein skal kunne endre passord, sette nytt passord og slette brukaren.
+Eit av endepunkta til REST-API-et er at ein skal kunne administrere brukarar. Då er planen min at ein skal kunne endre passord, sette nytt passord og slette brukaren.
 
 Eg kopierer ein del av koden frå opprett brukar-endepunktet då mykje av prosessen er den same.
 
 ```php
 // Kjør tokenautentisering
-require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'inkluderer/autentisering.php';
+require_once "inkluderer/autentisering.php";
 
 if ($_SERVER["REQUEST_METHOD"] === "PUT") {
     // Hent data frå forespørselen
@@ -447,12 +447,12 @@ if ($_SERVER["REQUEST_METHOD"] === "PUT") {
     // Sjekk at data er satt
     if (empty($data)) {
         http_response_code(400); // Bad Request
-        echo json_encode(['error' => 'Ingen data mottatt.']);
+        echo json_encode(["error" => "Ingen data mottatt."]);
         exit();
     }
 
     // Lag databasen om den ikkje finst og få tilgang til den
-    require_once 'lag-database.php';
+    require_once "inkluderer/lag-database.php";
 
     try {
         // Sett ny brukar inn i databasen med epost og hasha passord
@@ -462,16 +462,16 @@ if ($_SERVER["REQUEST_METHOD"] === "PUT") {
 
         if($sth->execute()) {
             http_response_code(); //
-            echo json_encode(['message' => '']);
+            echo json_encode(["message" => ""]);
         } else {
             http_response_code(500); // Internal Server Error
-            echo json_encode(['error' => 'Feil under lagring av brukar.']);
+            echo json_encode(["error" => "Feil under lagring av brukar."]);
         }
 
     } catch (PDOException $feil) {
         // Håndtere databasefeil
         http_response_code(500); // Internal Server Error
-        echo json_encode(['error' => 'Databasefeil: ' . $feil->getMessage()]);
+        echo json_encode(["error" => "Databasefeil: " . $feil->getMessage()]);
     }
 }
 ```
@@ -500,5 +500,131 @@ define("TOKENS", [
 ```
 
 `...ADMIN_TOKENS` legger alle administratortokens inn i arrayen med alle tokens slik at ein slepp å spesifisere det på nytt.
+
+### Endre passord
+
+Når ein skal endre passord må ein bruke metoden `PUT`, då det er det ein brukar for å oppdatere rader i databasen.
+
+```php
+// Sjekker om brukaren er administrator
+if (in_array($token, ADMIN_TOKENS)) {
+    // Sjekk at epost og nytt passord er satt for administrator
+    if (empty($data["epost"]) || empty($data["nyttPassord"])) {
+        http_response_code(400); // Bad Request
+        echo json_encode(["error" => "E-postadresse og nytt passord er påkravd."]);
+        exit();
+    }
+} else {
+    // Sjekk at epost, gamalt passord og nytt passord er satt for ikkje-administrator
+    if (empty($data["epost"]) || empty($data["passord"] || empty([$data["nyttPassord"]]))) {
+        http_response_code(400); // Bad Request
+        echo json_encode(["error" => "E-postadresse, gamalt passord og nytt passord er påkravd."]);
+        exit();
+    }
+}
+```
+
+Her har eg lagt til at ein sjekker om brukaren er administrator med `in_array($token, ADMIN_TOKENS)` eller ikkje. Ein må ha e-postadresse uansett, men vanlege brukarar må ha gamalt passord i tillegg. Dette sjekkes ved bruk av `empty($data["..."])`. Om nokon av dei faktisk er tomme returnerer serveren ein feilmelding.
+
+```sql
+<<<SQL
+    SELECT passord_hash
+    FROM brukarkontoar
+    WHERE
+        epost LIKE ?
+
+SQL
+```
+
+Denne SQL-spørringa henter ut passordet til brukaren som skal få nytt passord. Det gjer at ein kan sjekke om brukaren faktisk finst, og verifisere passordet for vanlege brukarar sin del.
+
+Med `$sth->execute([$data["epost"]]);` og `$brukar = $sth->fetch(PDO::FETCH_ASSOC);` køyrer skriptet spørringa og henter resultatet som ein array i variabelen `$brukar`. `$brukar` skal sjå noko slik ut om brukaren finst med eit hasha passord:
+
+> {"passord_hash":"$2y$10$dMVAFxB3XydwSRCfLiAwOeqdnhj79HcOJ4fcWLbQOURbDGY6xOx82"}
+
+Om brukaren ikkje finst skal `$brukar` bli `false`.
+
+```php
+// Sjekker at brukaren finst og at passord matcher
+if ($brukar == false || !password_verify($data["passord"], $brukar["passord_hash"])) {
+    http_response_code(401); // Unauthorized
+    echo json_encode(["error" => "Ugyldig e-postadresse eller passord."]);
+    exit();
+}
+```
+
+Denne koden sjekker at brukaren finst med `$brukar == false` og sjekker om passordet som er gitt stemmer med passordet i databasen. I `password_verify()` er det første parameteret passordet som blei sendt inn og andre parameteret som er lagra i databasen. `password_verify()` hashar det innsendte passordet og samanliknar det med hashen i databasen.
+
+Om brukaren ikkje finst eller passordet matchar ikkje sender REST-API-et ein feilmelding med at e-postadressa eller passordet er ugyldig.
+
+Om forespørselen har ein administrator-token sjår denne koden slik ut i staden for:
+
+```php
+// Sjekker at brukaren finst
+if ($brukar == false) {
+    http_response_code(400); // Bad Request
+    echo json_encode(["error" => "Ugyldig e-postadresse."]);
+    exit();
+}
+```
+
+```php
+    // Henter brukaren frå databasen
+    $sth = $dbh->prepare(
+        <<<SQL
+            SELECT passord_hash
+            FROM brukarkontoar
+            WHERE
+                epost LIKE ?
+
+        SQL
+    );
+    $sth->execute([$data["epost"]]);
+    $brukar = $sth->fetch(PDO::FETCH_ASSOC);
+
+    if (!in_array($token, ADMIN_TOKENS)) {
+        // Sjekker at brukaren finst og at passord matcher
+        if ($brukar == false || !password_verify($data["passord"], $brukar["passord_hash"])) {
+            http_response_code(401); // Unauthorized
+            echo json_encode(["error" => "Ugyldig e-postadresse eller passord."]);
+            exit();
+        }
+    } else {
+        // Sjekker at brukaren finst
+        if ($brukar == false) {
+            http_response_code(400); // Bad Request
+            echo json_encode(["error" => "Ugyldig e-postadresse."]);
+            exit();
+        }
+    }
+
+    // Hasher passord for økt sikkerheit
+    $hash = password_hash($data["nyttPassord"], PASSWORD_DEFAULT);
+
+    try {
+        // Oppdater brukaren med nytt passord
+        $sth = $dbh->prepare(
+            <<<SQL
+                UPDATE brukarkontoar
+                SET passord_hash = ?
+                WHERE epost = ?
+            SQL
+        );
+
+        if($sth->execute([$hash, $data["epost"],])) {
+            http_response_code(200); // OK
+            echo json_encode(["message" => "Nytt passord er satt."]);
+        } else {
+            http_response_code(500); // Internal Server Error
+            echo json_encode(["error" => "Feil under setting av passord."]);
+        }
+
+    } catch (PDOException $feil) {
+        // Håndtere databasefeil
+        http_response_code(500); // Internal Server Error
+        echo json_encode(["error" => "Databasefeil: " . $feil->getMessage()]);
+    }
+}
+```
 
 //TODO: Legg til kode for endre passord og sletting. Beskriv endringane som er gjort frå forige endepunkt.
