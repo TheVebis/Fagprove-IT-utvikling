@@ -1,7 +1,14 @@
 <?php
 
-// Kjør tokenautentisering
+// Køyr tokenautentisering
 require_once 'inkluderer/autentisering.php';
+
+// Sjekk om token er administrator
+if (!in_array($token, ADMIN_TOKENS)) {
+    http_response_code(403); // Forbidden
+    echo json_encode(["error" => "Krev opphøga rettar."]);
+    exit();
+}
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Hent data frå forespørselen
@@ -18,12 +25,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Sjekk at epost og passord er satt
     if (empty($data["epost"]) || empty($data["passord"])) {
         http_response_code(400); // Bad Request
-        echo json_encode(['error' => 'E-postadresse og passord er påkrevd.']);
+        echo json_encode(['error' => 'E-postadresse og passord er påkravd.']);
         exit();
     }
 
-    // Lag databasen om den ikkje finst
-    require_once 'lag-database.php';
+    // Lag databasen om den ikkje finst og få tilgang til den
+    require_once 'inkluderer/lag-database.php';
 
     // Hasher passord for økt sikkerheit
     $hash = password_hash($data["passord"], PASSWORD_DEFAULT);

@@ -47,3 +47,10 @@
 | 08:30 - 08:45    | Laste opp prosjektet til GitHub                                                         |
 | 08:45 - 09:10    | Dokumentere om GitHub                                                                   |
 | 09:10 - 10:20    | Lage endepunkt for administrasjon av brukar                                             |
+| 10:20 - 10:30    | Endra lokasjon på inkluderer-mappa og oppdatert kode                                    |
+| 10:30 - 10:40    | Test av endepunkt                                                                       |
+| 10:40 - 10:50    | Kort pause                                                                              |
+| 10:50 - 11:10    | Legge til sletting av brukar                                                            |
+| 11:10 - 11:20    | Testing og feilsøking av endepunkt                                                      |
+| 11:20 - 11:30    | Prat med Ole                                                                            |
+| 11:30 - 12:10    | Lunsj                                                                                   |

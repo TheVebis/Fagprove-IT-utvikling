@@ -342,7 +342,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Sjekk at epost og passord er satt
     if (empty($data["epost"]) || empty($data["passord"])) {
         http_response_code(400); // Bad Request
-        echo json_encode(['error' => 'E-postadresse og passord er påkrevd.']);
+        echo json_encode(['error' => 'E-postadresse og passord er påkravd.']);
         exit();
     }
 

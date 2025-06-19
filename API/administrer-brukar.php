@@ -1,6 +1,6 @@
 <?php
 
-// Kjør tokenautentisering
+// Køyr tokenautentisering
 require_once 'inkluderer/autentisering.php';
 
 if ($_SERVER["REQUEST_METHOD"] === "PUT") {
@@ -20,14 +20,14 @@ if ($_SERVER["REQUEST_METHOD"] === "PUT") {
            // Sjekk at epost, gamalt passord og nytt passord er satt for ikkje-administrator
         if (empty($data["epost"]) || empty($data["passord"] || empty([$data["nyttPassord"]]))) {
             http_response_code(400); // Bad Request
-            echo json_encode(['error' => 'E-postadresse, gamalt passord og nytt passord er påkrevd.']);
+            echo json_encode(['error' => 'E-postadresse, gamalt passord og nytt passord er påkravd.']);
             exit();
         } 
     } else {
         // Sjekk at epost og nytt passord er satt for administrator
         if (empty($data["epost"]) || empty($data["nyttPassord"])) {
             http_response_code(400); // Bad Request
-            echo json_encode(['error' => 'E-postadresse og nytt passord er påkrevd.']);
+            echo json_encode(['error' => 'E-postadresse og nytt passord er påkravd.']);
             exit();
         } 
     }
@@ -68,7 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] === "PUT") {
     $hash = password_hash($data["nyttPassord"], PASSWORD_DEFAULT);
 
     try {
-        // Sett ny brukar inn i databasen med epost og hasha passord
+        // Oppdater brukaren med nytt passord
         $sth = $dbh->prepare(
             <<<SQL
                 UPDATE brukarkontoar 
@@ -90,4 +90,56 @@ if ($_SERVER["REQUEST_METHOD"] === "PUT") {
         http_response_code(500); // Internal Server Error
         echo json_encode(['error' => 'Databasefeil: ' . $feil->getMessage()]);
     }   
+}
+
+if ($_SERVER["REQUEST_METHOD"] === "DELETE") {
+    // Sjekk om token er administrator
+    if (!in_array($token, ADMIN_TOKENS)) {
+        http_response_code(403); // Forbidden
+        echo json_encode(["error" => "Krev opphøga rettar."]);
+        exit();
+    }
+    // Hent data frå forespørselen
+    $json = file_get_contents("php://input");
+    $data = json_decode($json, true);
+
+    // Sjekk at data er satt
+    if (empty($data)) {
+        http_response_code(400); // Bad Request
+        echo json_encode(['error' => 'Ingen data mottatt.']);
+        exit();
+    }
+
+    // Sjekk at epost er satt
+    if (empty($data["epost"])) {
+        http_response_code(400); // Bad Request
+        echo json_encode(['error' => 'E-postadresse er påkravd.']);
+        exit();
+    }
+
+    // Lag databasen om den ikkje finst og få tilgang til den
+    require_once 'inkluderer/lag-database.php';
+
+    try {
+        // Slett brukarkonto
+        $sth = $dbh->prepare(
+            <<<SQL
+                DELETE FROM brukarkontoar 
+                WHERE epost = ?
+            SQL
+        );
+
+        if($sth->execute([$data["epost"],])) {
+            http_response_code(200); // OK
+            echo json_encode(['message' => 'Brukarkontoen er sletta.']);
+        } else {
+            http_response_code(500); // Internal Server Error
+            echo json_encode(['error' => 'Feil under sletting av brukarkonto.']);
+        }
+
+    } catch (PDOException $feil) {
+        // Håndtere databasefeil
+        http_response_code(500); // Internal Server Error
+        echo json_encode(['error' => 'Databasefeil: ' . $feil->getMessage()]);
+    }
 }
