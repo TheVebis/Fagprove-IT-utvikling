@@ -3,6 +3,13 @@
 // Kjør tokenautentisering
 require_once "inkluderer/autentisering.php";
 
+// Sjekk om token er administrator
+if (!in_array($token, ADMIN_TOKENS)) {
+    http_response_code(403); // Forbidden
+    echo json_encode(["error" => "Krev opphøga rettar."]);
+    exit();
+}
+
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
     // Lag databasen om den ikkje finst og få tilgang til den
     require_once "inkluderer/lag-database.php";
