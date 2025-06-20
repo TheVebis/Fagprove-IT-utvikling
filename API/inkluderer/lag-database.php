@@ -18,10 +18,17 @@ $dbh->query(
 // Lager tabellen eingongskodar som refererer brukerkontoar
 $dbh->query(
     <<<SQL
-        CREATE TABLE IF NOT EXISTS eingongkodar (
+        CREATE TABLE IF NOT EXISTS eingongskodar (
             id INTEGER PRIMARY KEY,
             brukar_id INTEGER NOT NULL REFERENCES brukarkontoar (id),
-            eingongkode TEXT NOT NULL UNIQUE
+            eingongskode TEXT NOT NULL UNIQUE
         )
     SQL
 );
+
+/*$dbh->query(
+    <<<SQL
+        INSERT INTO eingongskodar (brukar_id, eingongskode)
+        VALUES (1, "47587664")
+    SQL
+);*/

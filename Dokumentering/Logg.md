@@ -67,3 +67,9 @@
 | 08:00 - 08:25    | Starte dagen                                                                            |
 | 08:25 - 09:00    | Planlegge verifisering av brukar                                                        |
 | 09:00 - 09:10    | Legge til tabell for eingongskodar i databasen                                          |
+| 09:10 - 09:25    | Lage endepunkt for verifisering av brukar                                               |
+| 09:25 - 09:40    | Teste og feilsøke endepunkt                                                             |
+| 09:40 - 09:50    | Fortsette på endepunkt                                                                  |
+| 09:50 - 10:00    | Teste og feilsøke endepunkt                                                             |
+| 10:00 - 10:10    | Liten pause                                                                             |
+| 10:10 -          | Dokumentere database og endepunkt                                                       |
