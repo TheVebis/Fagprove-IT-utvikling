@@ -72,4 +72,9 @@
 | 09:40 - 09:50    | Fortsette på endepunkt                                                                  |
 | 09:50 - 10:00    | Teste og feilsøke endepunkt                                                             |
 | 10:00 - 10:10    | Liten pause                                                                             |
-| 10:10 -          | Dokumentere database og endepunkt                                                       |
+| 10:10 - 11:20    | Dokumentere database og endepunkt                                                       |
+| 11:20 - 12:10    | Lunsj                                                                                   |
+| 12:10 - 13:00    | Sette opp brukargrensesnitt                                                             |
+| 13:00 - 13:30    | Planlegge kva brukargrensesnittet skal gjere                                            |
+| 13:30 - 14:30    | Lage JavaScript til brukargrensesnittet                                                 |
+| 14:30 -          | Teste JavaScript                                                                        |

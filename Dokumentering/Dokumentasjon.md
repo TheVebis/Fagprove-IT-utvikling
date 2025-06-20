@@ -813,3 +813,36 @@ Ein ting som er greit å bite seg merke i er at om SQL-spørringa er ein suksess
 ## Applikasjon og endring
 
 I samtalen min med prøvenemnda oppdaga vi at vi litt forskjellege tolkingar av oppgåva. Eg hadde tolka den som om eg berre sku lage eit REST-API, og hadde planlagt å lage det mest mogleg uavhengeg av applikasjonen som spør etter det. Dette er for at kven som helst skal kunne bruke REST-API-et i sine eigne applikasjonar utan at dei må gjere endringar med koden min.
+
+# Fredag 20.6
+
+## Verifisering av brukar
+
+Det siste endepunktet i REST-API-et er at ein brukar skal kunne verifisere seg. Då er planen at ein e-post blir sendt ut til brukaren når brukaren blir oppretta. E-posten inneheld ei lenkje som tar den til verifiseringsida, som sender ein forespørsel til endepunktet. Planen er at lenkja skal ha ID-en til brukaren og ein eingongskode som ein Query String. Då vil den sjå ut noko slik: `https://eksempelnettside.no/verifisering.html?id=int&eingongskode=string`.
+
+> Ein Query String er ein måte å sende data med ein URL. Den fungerer slik at bak nettadressa kjem det eit `?` med noko tekst bak. Den har syntaxen `?parameterNamn=parameterVerdi`. Du kan og legge på fleire parameter med eit `&` bak parameterverdien fulgt av fleire parameter.
+
+For å sjekke om eingongskoden er gyldig må eg lagre eingongskodane i databasen på ein måte. Eg kan lagre det direkte i `brukarkontoar`, men eg velger heller å lage ein eigen tabell for det som heller referrer til `brukarkontoar`, slik at eingongskodane fortsatt er kopla til brukarkontoen.
+
+Fordelane med å ha det i ein eigen tabell er at ein enklare kan legge til og slette eingongskodane som er midlertidige data som skal bli sletta etter bruk, i motsetning til brukarkontoar som er meir permanente data. Det gir og betre oversikt i databasen då ei potensiell tom kolonne i tabellen med brukarkontoar kan auke størrelsen på tabellen unaudig.
+
+I fila for å lage database legg eg til kode for å opprette denne nye tabellen:
+
+```php
+// Lager tabellen eingongskodar som refererer brukerkontoar
+$dbh->query(
+    <<<SQL
+        CREATE TABLE IF NOT EXISTS eingongskodar (
+            id INTEGER PRIMARY KEY,
+            brukar_id INTEGER NOT NULL REFERENCES brukarkontoar (id),
+            eingongskode TEXT NOT NULL UNIQUE
+        )
+    SQL
+);
+```
+
+Den brukar `REFERENCES brukarkontoar (id)` for å kople seg opp mot brukarkontoen med den ID-en. Dette blir kalla ein Foreign Key.
+
+> //TODO forklar Foreign Key
+
+Eg hadde litt problemer når eg sku teste ut endepunktet seinare, då eg ikkje oppdaga at eg hadde kalla tabellen for eingongkodar i staden for eingong**s**kodar. Eg hadde det same problemet med `eingongskode`. Det gjor at eg fekk feilmelding med beskjed om at ein tabell med det namnet ikkje eksisterte. Heldegvis fekk eg fanga det opp raskt og endra det. Hadde eg ikkje det ville det potensielt blitt mykje kode som var avhengig av `eingongkodar`, og å endre det til `eingongskodar` seinare ville vere meir jobb enn det var no.

@@ -47,6 +47,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if($sth->execute([$data["epost"], $hash])) {
             http_response_code(201); // Created
             echo json_encode(["message" => "Brukar oppretta."]);
+
+            //TODO opprette eingongskode og sende mail
         } else {
             http_response_code(500); // Internal Server Error
             echo json_encode(["error" => "Feil under lagring av brukar."]);

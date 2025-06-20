@@ -1,0 +1,33 @@
+p {
+	font-size: medium;
+}
+
+button {
+	margin-bottom: 0.67em;
+	font-size: medium;
+}
+
+select {
+	font-size: medium;
+	margin-bottom: 0.67em;
+}
+
+label {
+	font-size: medium;
+}
+
+input {
+	font-size: medium;
+	margin-bottom: 0.67em;
+}
+
+form {
+	padding: 0.5em;
+	background-color: lightgrey;
+}
+
+.flex-column {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+}
