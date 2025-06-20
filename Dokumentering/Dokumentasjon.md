@@ -229,7 +229,7 @@ Til slutt sjekker skriptet om tokenen er ein gyldig token med å sjå om `$token
 
 Med å kjøre fetch-kall utan token, med feil token og med rett token får vi dette resultatet:
 
-![Fetch-kall](Bilder\fetch_kall.png)
+![Fetch-kall](Bilder/fetch_kall.png)
 
 ## Opprette brukar
 
@@ -568,7 +568,57 @@ if ($brukar == false) {
 }
 ```
 
+Skriptet hashar det nye passordet med `$hash = password_hash($data["nyttPassord"], PASSWORD_DEFAULT);` før det blir lagt inn i databasen.
+
+```sql
+<<<SQL
+    UPDATE brukarkontoar
+    SET passord_hash = ?
+    WHERE epost = ?
+SQL
+```
+
+SQL-spørringa brukar `UPDATE` for å oppdatere ei rad. `SET` spesifiserar at det er `passord_hash` som skal bli oppdatert med den nye `$hash`-variabelen, og `WHERE` avgrenser spørringa til rader der `epost` er lik den i førespurnaden. For å kjøre denne spørringa bruker skriptet `$sth->execute([$hash, $data["epost"]])`.
+
+Her er den fulle koden for å sette nytt passord:
+
 ```php
+// Køyr tokenautentisering
+require_once "inkluderer/autentisering.php";
+
+if ($_SERVER["REQUEST_METHOD"] === "PUT") {
+    // Hent data frå forespørselen
+    $json = file_get_contents("php://input");
+    $data = json_decode($json, true);
+
+    // Sjekk at data er satt
+    if (empty($data)) {
+        http_response_code(400); // Bad Request
+        echo json_encode(["error" => "Ingen data mottatt."]);
+        exit();
+    }
+
+    // Sjekker om brukaren er administrator
+    if (in_array($token, ADMIN_TOKENS)) {
+        // Sjekk at epost og nytt passord er satt for administrator
+        if (empty($data["epost"]) || empty($data["nyttPassord"])) {
+            http_response_code(400); // Bad Request
+            echo json_encode(["error" => "E-postadresse og nytt passord er påkravd."]);
+            exit();
+        }
+
+    } else {
+        // Sjekk at epost, gamalt passord og nytt passord er satt for ikkje-administrator
+        if (empty($data["epost"]) || empty($data["passord"] || empty([$data["nyttPassord"]]))) {
+            http_response_code(400); // Bad Request
+            echo json_encode(["error" => "E-postadresse, gamalt passord og nytt passord er påkravd."]);
+            exit();
+        }
+    }
+
+    // Lag databasen om den ikkje finst og få tilgang til den
+    require_once "inkluderer/lag-database.php";
+
     // Henter brukaren frå databasen
     $sth = $dbh->prepare(
         <<<SQL
@@ -582,18 +632,18 @@ if ($brukar == false) {
     $sth->execute([$data["epost"]]);
     $brukar = $sth->fetch(PDO::FETCH_ASSOC);
 
-    if (!in_array($token, ADMIN_TOKENS)) {
-        // Sjekker at brukaren finst og at passord matcher
-        if ($brukar == false || !password_verify($data["passord"], $brukar["passord_hash"])) {
-            http_response_code(401); // Unauthorized
-            echo json_encode(["error" => "Ugyldig e-postadresse eller passord."]);
-            exit();
-        }
-    } else {
+    if (in_array($token, ADMIN_TOKENS)) {
         // Sjekker at brukaren finst
         if ($brukar == false) {
             http_response_code(400); // Bad Request
             echo json_encode(["error" => "Ugyldig e-postadresse."]);
+            exit();
+        }
+    } else {
+        // Sjekker at brukaren finst og at passord matcher
+        if ($brukar == false || !password_verify($data["passord"], $brukar["passord_hash"])) {
+            http_response_code(401); // Unauthorized
+            echo json_encode(["error" => "Ugyldig e-postadresse eller passord."]);
             exit();
         }
     }
@@ -627,4 +677,139 @@ if ($brukar == false) {
 }
 ```
 
-//TODO: Legg til kode for endre passord og sletting. Beskriv endringane som er gjort frå forige endepunkt.
+### Slette brukarkonto
+
+Å slette brukarkonto er eigentleg ganske enkelt samanlikna med å endre passord. Enten har brukaren tilgang og sendt inn rett data, og brukaren blir sletta. Elles får ein feilmelding med informasjon om feilen.
+
+Ein brukar metoden `DELETE` for å slette data frå ein database.
+
+Det er lagt til ein sjekk om brukaren er administrator, då berre administratorar har tilgang til å slette brukarkontoar. Dette sjekkast med å sjå om tokenen ligg i `ADMIN_TOKENS`-arrayen.
+
+SQL-spørringa brukar `WHERE epost = ?` for å avgrense søket slik at ein slettar den rada ein er ute etter. `?` blir kjørt som `$data["epost"]` som er e-postadressa som er lagt ved i førespurnaden
+
+```SQL
+<<<SQL
+    DELETE FROM brukarkontoar
+    WHERE epost = ?
+SQL
+```
+
+Sidan endepunktet for å slette postar ligg i same fil som endepunktet for å endre passord blir `require_once "inkluderer/autentisering.php";` køyrt i tillegg til følgande kode:
+
+```php
+if ($_SERVER["REQUEST_METHOD"] === "DELETE") {
+    // Sjekk om token er administrator
+    if (!in_array($token, ADMIN_TOKENS)) {
+        http_response_code(403); // Forbidden
+        echo json_encode(["error" => "Krev opphøga rettar."]);
+        exit();
+    }
+    // Hent data frå forespørselen
+    $json = file_get_contents("php://input");
+    $data = json_decode($json, true);
+
+    // Sjekk at data er satt
+    if (empty($data)) {
+        http_response_code(400); // Bad Request
+        echo json_encode(["error" => "Ingen data mottatt."]);
+        exit();
+    }
+
+    // Sjekk at epost er satt
+    if (empty($data["epost"])) {
+        http_response_code(400); // Bad Request
+        echo json_encode(["error" => "E-postadresse er påkravd."]);
+        exit();
+    }
+
+    // Lag databasen om den ikkje finst og få tilgang til den
+    require_once "inkluderer/lag-database.php";
+
+    try {
+        // Slett brukarkonto
+        $sth = $dbh->prepare(
+            <<<SQL
+                DELETE FROM brukarkontoar
+                WHERE epost = ?
+            SQL
+        );
+
+        if($sth->execute([$data["epost"]])) {
+            http_response_code(200); // OK
+            echo json_encode(["message" => "Brukarkontoen er sletta."]);
+        } else {
+            http_response_code(500); // Internal Server Error
+            echo json_encode(["error" => "Feil under sletting av brukarkonto."]);
+        }
+
+    } catch (PDOException $feil) {
+        // Håndtere databasefeil
+        http_response_code(500); // Internal Server Error
+        echo json_encode(["error" => "Databasefeil: " . $feil->getMessage()]);
+    }
+}
+```
+
+#### Request Method
+
+> Sidan førespurnadden sender ein metode kvar gong den skal bruke eit endepunkt, kan ein ha fleire endepunkt i same fil. Her har eg både ein `PUT` og ein `DELETE` i ei og same fil. Dette går fint fordi skriptet har `if ($_SERVER["REQUEST_METHOD"] === "...") {...}` i starten før sjølve handlinga blir køyrt. Dette passer på at rett endepunkt blir køyrt.
+>
+> Ein bør ikkje ha fleire endepunkt med same metode i same fil då ein må begynne med meir logikk rundt dette og applikasjonar vil behandle det som same endepunkt sjølv om det eigentleg er fleire. Eg var litt usikker på å gjere dette med endepunktet for endring av passord, då dette gjer to litt forskjellige ting (endre passord på eigen brukar og på andre sin brukar), men beslutta at sidan koden var tilnærma identisk var det enklare og betre å gjer det same stad, då ein slepp å repetere så mykje kode.
+>
+> Ein kan teoretisk ha ein god del endepunkt i same fil så lenge dei har forskjellege metodar, men å gjere dette med endepunkt som gjer forskjellege ting kan skape forvirring og gjere det vanskeleg å lese koden. Derfor har eg laga forskjellege filer for dei ulike endepunkta. Endring av passord og slette brukarkonto kjem begge under administrering av brukar, så eg har difor lagt dei i same fil.
+
+## Oversikt over brukarar
+
+Oversikt over kva brukarar som er i databasen utan å måtte ty til verktøy som [SQLite Viewer](https://inloop.github.io/sqlite-viewer/) er greit å ha i sida si. Det er og eit av punkta i oppgåva som REST-API-et skal kunne returnere. Derfor har eg laga eit endepunkt for å hente ut relevant informasjon frå databasen.
+
+Ein `GET`-metode er ikkje så veldig avansert, då den berre skal hente data frå eit endepunkt. Eg har heller ikkje laga noko banebrytande kode rundt det som skal være veldig sjølvforklarande om du har sett dei forige endepunkta. Eg skal likevel forklare det som er annleis.
+
+```php
+// Kjør tokenautentisering
+require_once "inkluderer/autentisering.php";
+
+if ($_SERVER["REQUEST_METHOD"] === "GET") {
+    // Lag databasen om den ikkje finst og få tilgang til den
+    require_once "inkluderer/lag-database.php";
+
+    try {
+        // Sett ny brukar inn i databasen med epost og hasha passord
+        $sth = $dbh->prepare(
+            <<<SQL
+                SELECT id, epost, verifisert
+                FROM brukarkontoar
+            SQL
+        );
+
+        if($sth->execute()) {
+            http_response_code(200); // OK
+            echo json_encode(["message" => "Oversikt henta.", "data" => $sth->fetchAll(PDO::FETCH_ASSOC)]);
+        } else {
+            http_response_code(500); // Internal Server Error
+            echo json_encode(["error" => "Feil under lagring av brukar."]);
+        }
+
+    } catch (PDOException $feil) {
+        // Håndtere databasefeil
+        http_response_code(500); // Internal Server Error
+        echo json_encode(["error" => "Databasefeil: " . $feil->getMessage()]);
+    }
+}
+```
+
+SQL-spørringa er veldig enkel. `SELECT` velger kva kolonner den skal hente ut frå databasen, i dette tilfellet `id`, `epost` og `verifisert`, og `FROM` seier kva tabell den skal hente frå, `brukarkontoar`.
+
+```sql
+<<<SQL
+    SELECT id, epost, verifisert
+    FROM brukarkontoar
+SQL
+```
+
+> Om eg hadde brukt `*` i staden for `id, epost, verifisert` ville eg fått alle kolonner i tabellen, men sidan passorda er hasha er det ikkje så relevant å sjå det. Det kunne og vert eit sikkerheitsproblem då det er noko enklare å "brute force" passordet når du har hashen. Fortsatt så er hashing veldig sikkert.
+
+Ein ting som er greit å bite seg merke i er at om SQL-spørringa er ein suksess blir alt sendt tilbake til klienten i JSON-format med `"data" => $sth->fetchAll(PDO::FETCH_ASSOC)`. Slik kan ein bruke dataen frå databasen, tildømes vise den i ein tabell.
+
+## Applikasjon og endring
+
+I samtalen min med prøvenemnda oppdaga vi at vi litt forskjellege tolkingar av oppgåva. Eg hadde tolka den som om eg berre sku lage eit REST-API, og hadde planlagt å lage det mest mogleg uavhengeg av applikasjonen som spør etter det. Dette er for at kven som helst skal kunne bruke REST-API-et i sine eigne applikasjonar utan at dei må gjere endringar med koden min.

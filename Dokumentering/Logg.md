@@ -62,3 +62,5 @@
 | 13:50 - 13:55    | Samtale med prøvenemnda om endringar                                                    |
 | 13:55 - 14:10    | Hente og spise mat frå koldtbord etter arrangement i kantina                            |
 | 14:10 - 15:00    | Dokumentere endepunkt                                                                   |
+| 18:00 - 19:00    | Dokumentering                                                                           |
+| **Fredag 20.6**  |
