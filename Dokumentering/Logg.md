@@ -64,3 +64,6 @@
 | 14:10 - 15:00    | Dokumentere endepunkt                                                                   |
 | 18:00 - 19:00    | Dokumentering                                                                           |
 | **Fredag 20.6**  |
+| 08:00 - 08:25    | Starte dagen                                                                            |
+| 08:25 - 09:00    | Planlegge verifisering av brukar                                                        |
+| 09:00 - 09:10    | Legge til tabell for eingongskodar i databasen                                          |
