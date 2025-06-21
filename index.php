@@ -7,24 +7,37 @@
 		<link rel="stylesheet" href="style.css" />
 	</head>
 	<body>
-		<h1 id="tittel">Hei, administrator</h1>
+		<h1 id="tittel">Hei, administrator!</h1>
 		<button onclick="byttRolle()">Bytt rolle</button>
 
 		<form
 			id="form"
 			method="post"
-			onsubmit="performSubmit(); event.preventDefault"
+			onsubmit="performSubmit(); event.preventDefault()"
+			class="flex-column"
 		>
-			<select name="handling">
+			<select id="handling" name="handling" onchange="byttHandling()">
 				<option value="">Velg handling</option>
 				<option value="oversikt-brukarar">Sjå alle brukarar</option>
 				<option value="opprett-brukar">Opprett brukar</option>
 				<option value="endre-passord">Endre passord</option>
 				<option value="slett-brukar">Slett brukar</option>
 			</select>
-			<div class="flex-column">
-				<label for="epost">E-post</label>
-				<input id="epost" name="epost" />
+			<div id="epost" class="flex-column"> 
+				<label for="epost-input">E-post</label>
+				<input id="epost-input" name="epost" />
+			</div>
+			<div id="passord" class="flex-column">
+				<label for="passord-input">Passord</label>
+				<input id="passord-input" name="passord" type="password"/>
+			</div>
+			<div id="nyttPassord" class="flex-column">
+				<label for="nyttPassord-input">Nytt passord</label>
+				<input id="nyttPassord-input" name="nyttPassord" type="password"/>
+			</div>
+			<div id="gjentaPassord" class="flex-column">
+				<label for="gjentaPassord-input">Gjenta passord</label>
+				<input id="gjentaPassord-input" name="gjentaPassord" type="password"/>
 			</div>
 			<button type="submit">Send</button>
 		</form>

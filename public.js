@@ -4,12 +4,15 @@ let rolle = "administrator";
 const adminToken = "87y90br8732gf97f2121hfdkl8i";
 const brukarToken = "uav0por0s32kf90mao20c05jc43";
 
-function performSubmit() {
-	// Henter data frå formen og legg i ein array
-	const formData = new FormData(document.getElementById("form"));
-	const entries = [...formData.entries()];
+byttHandling();
 
-	console.log(entries);
+function performSubmit() {
+	// Henter data frå formen
+	const formData = new FormData(document.getElementById("form"));
+
+	// Lager eit objekt med innhaldet i formen
+	const entries = Object.fromEntries(formData.entries());
+
 	if (entries.handling === "oversikt-brukarar") {
 		fetch("/API/oversikt-brukarar.php", {
 			method: "GET",
@@ -22,20 +25,8 @@ function performSubmit() {
 				return svar.json();
 			})
 			.then((svar) => {
-				console.log(svar);
+				if (svar.error) console.log(svar);
 			});
-		/*if (
-			hending.target.dataset.response !== undefined &&
-			responser[hending.target.dataset.response] !== undefined
-		) {
-			lovnad
-				.then((response) => {
-					return response.json();
-				})
-				.then((response) => {
-					responser[hending.target.dataset.response](response);
-				});
-		}*/
 	} else if (entries.handling === "opprett-brukar") {
 		fetch("/API/opprett-brukar.php", {
 			method: "POST",
@@ -43,7 +34,7 @@ function performSubmit() {
 				"content-type": "application/json",
 				X_TOKEN: rolle === "administrator" ? adminToken : brukarToken,
 			},
-			body: JSON.stringify(Object.fromEntries(entries)),
+			body: JSON.stringify(entries),
 		})
 			.then((svar) => {
 				return svar.json();
@@ -58,7 +49,7 @@ function performSubmit() {
 				"content-type": "application/json",
 				X_TOKEN: rolle === "administrator" ? adminToken : brukarToken,
 			},
-			body: JSON.stringify(Object.fromEntries(entries)),
+			body: JSON.stringify(entries),
 		})
 			.then((svar) => {
 				return svar.json();
@@ -73,7 +64,7 @@ function performSubmit() {
 				"content-type": "application/json",
 				X_TOKEN: rolle === "administrator" ? adminToken : brukarToken,
 			},
-			body: JSON.stringify(Object.fromEntries(entries)),
+			body: JSON.stringify(entries),
 		})
 			.then((svar) => {
 				return svar.json();
@@ -84,7 +75,52 @@ function performSubmit() {
 	}
 }
 
+function byttHandling() {
+	const handling = document.getElementById("handling").value;
+	const epost = document.getElementById("epost");
+	const passord = document.getElementById("passord");
+	const nyttPassord = document.getElementById("nyttPassord");
+	const gjentaPassord = document.getElementById("gjentaPassord");
+
+	epost.style.display = "none";
+	passord.style.display = "none";
+	nyttPassord.style.display = "none";
+	gjentaPassord.style.display = "none";
+
+	// Sjå alle brukarar
+	if (handling === "oversikt-brukarar") {
+		// Treng ikkje gjer noko
+	}
+
+	// Opprett brukar
+	if (handling === "opprett-brukar") {
+		epost.style.display = "block";
+		passord.style.display = "block";
+		gjentaPassord.style.display = "block";
+	}
+
+	// Endre passord
+	if (handling === "endre-passord") {
+		epost.style.display = "block";
+		if (rolle !== "administrator") {
+			passord.style.display = "block";
+		}
+		nyttPassord.style.display = "block";
+		gjentaPassord.style.display = "block";
+	}
+
+	// Slett brukar
+	if (handling === "slett-brukar") {
+		epost.style.display = "block";
+	}
+}
+
 function byttRolle() {
 	rolle = rolle === "administrator" ? "brukar" : "administrator";
 	document.getElementById("tittel").innerText = "Hei, " + rolle + "!";
+
+	if (rolle !== "administrator") {
+		document.getElementById("handling").value = "endre-passord";
+	}
+	byttHandling();
 }

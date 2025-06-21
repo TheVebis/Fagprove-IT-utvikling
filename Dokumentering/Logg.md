@@ -77,4 +77,14 @@
 | 12:10 - 13:00    | Sette opp brukargrensesnitt                                                             |
 | 13:00 - 13:30    | Planlegge kva brukargrensesnittet skal gjere                                            |
 | 13:30 - 14:30    | Lage JavaScript til brukargrensesnittet                                                 |
-| 14:30 -          | Teste JavaScript                                                                        |
+| 14:30 - 15:10    | Teste og feilsøke JavaScript                                                            |
+| 15:10 - 15:35    | Lage dynamisk form                                                                      |
+| 15:35 - 15:55    | Pause                                                                                   |
+| 15:55 - 16:25    | Lage dynamisk form                                                                      |
+| 16:25 - 17:00    | Matpause                                                                                |
+| **Laurdag 21.6** |
+| 12:30 - 12:50    | Lage dynamisk form                                                                      |
+| 12:50 - 13:10    | Teste og feilsøke form                                                                  |
+| 13:10 - 13:15    | Hente drikke på ein varm dag                                                            |
+
+| 13:15 -
