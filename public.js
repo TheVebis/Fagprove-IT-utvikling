@@ -6,11 +6,11 @@ const brukarToken = "uav0por0s32kf90mao20c05jc43";
 
 byttHandling();
 
-function performSubmit() {
-	// Henter data frå formen
+function sendInn() {
+	// Henter data frå skjemaet
 	const formData = new FormData(document.getElementById("form"));
 
-	// Lager eit objekt med innhaldet i formen
+	// Lager eit objekt med innhaldet i skjemaet
 	const entries = Object.fromEntries(formData.entries());
 
 	if (entries.handling === "oversikt-brukarar") {
@@ -94,24 +94,24 @@ function byttHandling() {
 
 	// Opprett brukar
 	if (handling === "opprett-brukar") {
-		epost.style.display = "block";
-		passord.style.display = "block";
-		gjentaPassord.style.display = "block";
+		epost.style.display = "flex";
+		passord.style.display = "flex";
+		gjentaPassord.style.display = "flex";
 	}
 
 	// Endre passord
 	if (handling === "endre-passord") {
-		epost.style.display = "block";
+		epost.style.display = "flex";
 		if (rolle !== "administrator") {
-			passord.style.display = "block";
+			passord.style.display = "flex";
 		}
-		nyttPassord.style.display = "block";
-		gjentaPassord.style.display = "block";
+		nyttPassord.style.display = "flex";
+		gjentaPassord.style.display = "flex";
 	}
 
 	// Slett brukar
 	if (handling === "slett-brukar") {
-		epost.style.display = "block";
+		epost.style.display = "flex";
 	}
 }
 

@@ -13,7 +13,7 @@
 		<form
 			id="form"
 			method="post"
-			onsubmit="performSubmit(); event.preventDefault()"
+			onsubmit="sendInn(); event.preventDefault()"
 			class="flex-column"
 		>
 			<select id="handling" name="handling" onchange="byttHandling()">
