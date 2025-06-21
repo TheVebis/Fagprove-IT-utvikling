@@ -78,13 +78,19 @@
 | 13:00 - 13:30    | Planlegge kva brukargrensesnittet skal gjere                                            |
 | 13:30 - 14:30    | Lage JavaScript til brukargrensesnittet                                                 |
 | 14:30 - 15:10    | Teste og feilsøke JavaScript                                                            |
-| 15:10 - 15:35    | Lage dynamisk form                                                                      |
+| 15:10 - 15:35    | Lage dynamisk skjema                                                                    |
 | 15:35 - 15:55    | Pause                                                                                   |
-| 15:55 - 16:25    | Lage dynamisk form                                                                      |
+| 15:55 - 16:25    | Lage dynamisk skjema                                                                    |
 | 16:25 - 17:00    | Matpause                                                                                |
 | **Laurdag 21.6** |
-| 12:30 - 12:50    | Lage dynamisk form                                                                      |
-| 12:50 - 13:10    | Teste og feilsøke form                                                                  |
+| 12:30 - 12:50    | Lage dynamisk skjema                                                                    |
+| 12:50 - 13:10    | Teste og feilsøke skjema                                                                |
 | 13:10 - 13:15    | Hente drikke på ein varm dag                                                            |
-
-| 13:15 -
+| 13:15 - 13:20    | Laste endringar opp til GitHub                                                          |
+| 13:20 - 13:40    | Gjør litt husarbeid                                                                     |
+| 13:40 - 14:40    | Dokumentere brukargrensesnitt                                                           |
+| 14:40 - 15:00    | Pause                                                                                   |
+| 15:00 - 15:30    | Dokumentere HTML                                                                        |
+| 15:30 - 16:00    | Lunsjpause                                                                              |
+| 16:00 - 17:00    | Dokumentere HTML                                                                        |
+| **Sundag 22.6**  |

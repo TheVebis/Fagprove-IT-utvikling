@@ -846,3 +846,118 @@ Den brukar `REFERENCES brukarkontoar (id)` for å kople seg opp mot brukarkontoe
 > //TODO forklar Foreign Key
 
 Eg hadde litt problemer når eg sku teste ut endepunktet seinare, då eg ikkje oppdaga at eg hadde kalla tabellen for eingongkodar i staden for eingong**s**kodar. Eg hadde det same problemet med `eingongskode`. Det gjor at eg fekk feilmelding med beskjed om at ein tabell med det namnet ikkje eksisterte. Heldegvis fekk eg fanga det opp raskt og endra det. Hadde eg ikkje det ville det potensielt blitt mykje kode som var avhengig av `eingongkodar`, og å endre det til `eingongskodar` seinare ville vere meir jobb enn det var no.
+
+//TODO dokumenter mer av API-et
+
+## Applikasjon og brukargrensesnitt
+
+Endringa som kom i løpet av oppgåva var at det sku være eit brukargrensesnitt ein kan bruke til å sende data til endepunkta i REST-API-et. Eg har planlagt å lage eit enkelt brukargrensesnitt som består av eit skjema der ein skriv inn dei ulike verdiane endepunktet treng. Eg vil gjerne at skjemaet skal være dynamisk og at dei relevante felta dukkar opp etter kva endepunkt ein har tenkt å nå.
+
+For å lage brukargrensesnittet må eg ta i bruk HTML, CSS og JavaScript for å lage ein applikasjon/ei nettside som kan vise brukargrensesnittet. HTML (HyperText Markup Language) er sjølve elementa på sida som skjemaet, felt og knappar. CSS (Cascading Style Sheets) lager stil på dei ulike elementa slik at dei ser fine ut og slik eg vil ha dei. JavaScript tar seg av det dynamiske på sida i tillegg til å kalle på dei rette endepunkta. Det er desse tre språka som blir brukt for å lage nettsidene du brukar kvar dag.
+
+> **Merk:** Eg har ikkje lagt til noko innloggingsystem på sida. Sida er berre meint for interne testar og har difor inga sikkring. Ein har automatisk administratortilgangar, men kan bytte mellom roller for å teste begge deler. Om ein skal bruke denne applikasjonen i produksjon må ein først implementere eit sikkert innloggingsystem.
+
+Eg har satt opp følgande brukargrensesnitt med hjelp av HTML, CSS og JavaScript, og eg skal forklar korleis koden er bygd opp.
+
+![Brukargrensesnitt](Bilder/brukargrensesnitt.png)
+
+### HTML
+
+HTML er den viktigaste delen av ei nettside. Utan den er det ingen element på sida. Under er den komplette HTML-koden for applikasjonen over.
+
+```html
+<!DOCTYPE html>
+<html lang="nn">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Brukarsystem</title>
+		<link rel="stylesheet" href="style.css" />
+	</head>
+	<body>
+		<h1 id="tittel">Hei, administrator!</h1>
+		<button onclick="byttRolle()">Bytt rolle</button>
+
+		<form
+			id="form"
+			method="post"
+			onsubmit="sendInn(); event.preventDefault()"
+			class="flex-column"
+		>
+			<select id="handling" name="handling" onchange="byttHandling()">
+				<option value="">Velg handling</option>
+				<option value="oversikt-brukarar">Sjå alle brukarar</option>
+				<option value="opprett-brukar">Opprett brukar</option>
+				<option value="endre-passord">Endre passord</option>
+				<option value="slett-brukar">Slett brukar</option>
+			</select>
+			<div id="epost" class="flex-column">
+				<label for="epost-input">E-post</label>
+				<input id="epost-input" name="epost" />
+			</div>
+			<div id="passord" class="flex-column">
+				<label for="passord-input">Passord</label>
+				<input id="passord-input" name="passord" type="password" />
+			</div>
+			<div id="nyttPassord" class="flex-column">
+				<label for="nyttPassord-input">Nytt passord</label>
+				<input
+					id="nyttPassord-input"
+					name="nyttPassord"
+					type="password"
+				/>
+			</div>
+			<div id="gjentaPassord" class="flex-column">
+				<label for="gjentaPassord-input">Gjenta passord</label>
+				<input
+					id="gjentaPassord-input"
+					name="gjentaPassord"
+					type="password"
+				/>
+			</div>
+			<button type="submit">Send</button>
+		</form>
+		<script src="public.js"></script>
+	</body>
+</html>
+```
+
+Forklaring av koden:
+
+Alle elementer i HTML må definerast med ein tag, tildømes `<button>` for ein knapp, slik at nettlesaren veit kva type element det er, kva ein kan gjer med det elementet i JavaScript, og korleis CSS skal legge stiler på det. Element må og som regel ha ein slutt-tag. Slutt-taggen er lik start-taggen, men har ein skråstrek for å vise at den er ein slutt tag. Tildømes `</button>` for å avslutte ein knapp. Elementer mellom `<button>` og `</button>` vil vere eit barn av knapp-elementet.
+
+`<!DOCTYPE html>` blir brukt til å sette dokument-typen slik at nettlesaren forstår kva dokumenttype den kan forvente. Alle HTML-dokument må starte med dette.
+
+Likeså må ein ha `<html>` for å representere rota av HTML-dokumentet. All koden (bortsett frå `<!DOCTYPE html>`) må være inni eit HTML-element. Det er standard å definere kva språk nettsida er på ved hjelp av språk-attributet `lang` inni HTML-taggen. Dette er for å hjelpe nettlesaren å vite kva språk sida har, og å eventuelt kunne oversette den. Eg har satt sida til nynorsk med å bruke `lang="nn"`, då språkkoden for nynorsk er `nn`.
+
+`<head>` inneheld alt av metadata til nettsida. Det som er inni den blir ikkje vist på sida. Den pleier å definere tittelen på nettsida `<title>Brukarsystem</title>`, stiler `<link rel="stylesheet" href="style.css" />` og annan metadata.
+
+Mesteparten av HTML-koden ligg inni `<body>`-elementet. Den inneheld alt som skal visast på sida.
+
+Ein `<h1>` er ei overskrift som blir vist i stor skrift. Dei kjem i mange versjonar frå h1 og nedover til h6, der h1 er den største. Her inneheld den ein velkomst til den som er innpå sida og viser kva rolle den har.
+
+Eg har lagt til ein knapp som endrer rollen for brukaren med hjelp av `byttRolle`-funksjonen som blir køyrt når ein klikkar på knappen. Eg skal forklare meir om korleis funksjonen fungerer i JavaScript-delen. Knappen er lagt til for testing av sida.
+
+Skjemaet er hovuddelen av nettsida. I HTML blir skjema definert med `<form>`-taggen. Den har fått ein ID slik at det er lettare å finne fram til den. Metoden er satt til `post` då skjemaet skal sende inn data.
+
+Det er og lagt til ei hending når skjemaet blir sendt inn med `onsubmit="sendInn(); event.preventDefault()"`. Dette attributet seier at når skjemaet blir sendt inn skal den kjøre `sendInn`-funksjonen. `event.preventDefault()` hindrar skjemaet å faktisk sende inn, noko som ville last inn sida på nytt og fjerna eventuell data vi ville fått tilbake frå endepunkta som blir køyrt i `sendInn`.
+
+Skjemaet har og klassen `flex-column` som blir brukt til å legge stil på skjemaet. Eg skal forklare meir kva den gjer i CSS-delen.
+
+Det første elementet i skjemaet er ein `<select>`, ein nedtrekksmeny som definerer kva handling brukaren vil utføre. Attributtet `name` seier kva namn elementet har. I eit skjema blir namnet ein referanse for data som blir sendt inn. Nedtrekksmenyen køyrer og `byttHandling`-funksjonen når den blir endra, som når ein velger eit av alternativa i nedtrekksmenyen.
+
+Nedtrekksmenyen består av fleire alternativ representert med fleire `<option>`-taggar. Dei har `<value>`, verdien som er valgt. Det valgte alternativet sin verdi blir og satt som verdien til nedtrekksmenyen og blir sendt inn som ein del av skjemaet. Dei ulike verdiane korresponderer med ulike handlingar i `sendInn`-funksjonen.
+
+Vidare er det fleire `<div>`-ar som inneheld ein `<label>` og ein `<input>`. Desse representer dei ulike tekstfelta om ein kan skrive inn data i.
+
+Ein `<div>` er eit av dei mest brukta taggane i HTML. Ein div representerer ein boks med innhald i og dekker behova som andre HTML-taggar ikkje gjer. Det er vanleg å putte innhald som høyrer i lag inni ein div for å ha betre kontroll på den i HTML-hierarkiet. I denne koden høyrer `<label>` og `<input>` i lag, så då gir det meining å plassere dei i ein div. Diven har blitt gitt ein ID for å lettare kunne finnast av JavaScriptet som skal vise og skjule dei ulike alternativa.
+
+Ein `<label>` er ein bit med tekst som blir brukt til å forklare eit felt. `for`-attributet viser kva element den høyrer til med å bruke ID-en til elementet.
+
+Ein `<input>`, eller ein merkelapp, kan være forskjellige typar felt og knappar ein brukar kan samhandle med. Her er dei satt om som tekstfelt som er standardtypen for input. Dei har ein ID slik at merkelappane kan referer til dei. Passord-felta har `type="password"` som gjer at nettlesaren registrerer det som passord og skjuler teksten som er skreve i dei.
+
+I slutten av skjemaet er det ein `<button>` med typen `submit`. Den sender inn skjemaet som vil kjøre `sendInn`-funksjonen som forklart tidligare.
+
+Nederst i koden er det eit `<script>`-tag som henter inn JavaScript. `src`-attributtet seier kvar den finn JavaScript-fila. Ein kunne potensielt ha JavaScript-koden direkte i HTML-en under eit `<script>`-tag, men for oversikten sin del er det vanleg å ha separate filer for det.
+
+### CSS
