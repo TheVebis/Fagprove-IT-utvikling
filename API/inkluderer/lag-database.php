@@ -1,6 +1,6 @@
 <?php
 // Banen til databasen
-$dsn = "sqlite:" . dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . "./database.sqlite3";
+$dsn = "sqlite:" . dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . "database_brukarkontoar.sqlite3";
 $dbh = new PDO($dsn);
 
 // Lager tabellen brukarkontoar

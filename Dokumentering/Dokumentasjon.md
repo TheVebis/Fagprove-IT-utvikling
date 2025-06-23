@@ -132,7 +132,7 @@ Eg byrjar med å sette opp SQLite-databasen som skal lagre alle brukarkontoane. 
 
 ```php
 // Banen til databasen
-$dsn = "sqlite:" . dirname(__DIR__) . DIRECTORY_SEPARATOR . "./database.sqlite3";
+$dsn = "sqlite:" . dirname(__DIR__) . DIRECTORY_SEPARATOR . "database_brukarkontoar.sqlite3";
 $dbh = new PDO($dsn);
 
 // Lager tabellen brukarkontoar
@@ -150,7 +150,7 @@ $dbh->query(
 
 Forklaring av koden:
 
-`$dsn = "sqlite:" . dirname(__DIR__) . DIRECTORY_SEPARATOR . "./database.sqlite3";`
+`$dsn = "sqlite:" . dirname(__DIR__) . DIRECTORY_SEPARATOR . "database_brukarkontoar.sqlite3";`
 
 Koden begynner med å definere ein variabel `$dsn`, som skal spesifisere banen til databasen.
 
@@ -159,7 +159,7 @@ Koden begynner med å definere ein variabel `$dsn`, som skal spesifisere banen t
 `dirname(__DIR__)` hentar banen til mappa over den noverande mappa.
 `DIRECTORY_SEPARATOR` gir den riktige mappa-separatoren for operativsystemet (til dømes / for Unix, \ for Windows).
 
-Resultatet av denne koden blir ein fullstendig bane til SQLite-databasen `database.sqlite3` som ligg i ei overordna mappe. Dette er nødvendig då denne fila ligg i ei undermappe i prosjektet.
+Resultatet av denne koden blir ein fullstendig bane til SQLite-databasen `database_brukarkontoar.sqlite3` som ligg i ei overordna mappe. Dette er nødvendig då denne fila ligg i ei undermappe i prosjektet.
 
 `$dbh = new PDO($dsn);` bruker PHP sin PDO (PHP Data Objects) klasse for å opprette ein tilkopling til databasen ved hjelp av den definerte DSN.
 
