@@ -1,24 +1,13 @@
-p {
-	font-size: medium;
-}
-
-button {
-	margin-bottom: 0.67em;
-	font-size: medium;
-}
-
-select {
-	font-size: medium;
-	margin-bottom: 0.67em;
-}
-
+p,
 label {
 	font-size: medium;
 }
 
+button,
+select,
 input {
-	font-size: medium;
 	margin-bottom: 0.67em;
+	font-size: medium;
 }
 
 form {
