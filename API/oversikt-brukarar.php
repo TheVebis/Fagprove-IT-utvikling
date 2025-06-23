@@ -1,5 +1,7 @@
 <?php 
 
+// Oversikt brukarar
+
 // Kjør tokenautentisering
 require_once "inkluderer/autentisering.php";
 

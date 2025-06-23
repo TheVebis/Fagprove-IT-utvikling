@@ -1,5 +1,7 @@
 <?php
 
+// Endre passord
+
 // Køyr tokenautentisering
 require_once "inkluderer/autentisering.php";
 
@@ -20,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] === "PUT") {
         // Sjekk at epost og nytt passord er satt for administrator
         if (empty($data["epost"]) || empty($data["nyttPassord"])) {
             http_response_code(400); // Bad Request
-            echo json_encode(["error" => "E-postadresse og nytt passord er påkravd."]);
+            echo json_encode(["error" => "E-postadresse og nytt passord er påkrevd."]);
             exit();
         } 
 
@@ -28,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] === "PUT") {
         // Sjekk at epost, gamalt passord og nytt passord er satt for ikkje-administrator
         if (empty($data["epost"]) || empty($data["passord"] || empty([$data["nyttPassord"]]))) {
             http_response_code(400); // Bad Request
-            echo json_encode(["error" => "E-postadresse, gamalt passord og nytt passord er påkravd."]);
+            echo json_encode(["error" => "E-postadresse, gamalt passord og nytt passord er påkrevd."]);
             exit();
         } 
     }
@@ -93,6 +95,7 @@ if ($_SERVER["REQUEST_METHOD"] === "PUT") {
     }   
 }
 
+// Slett brukar
 if ($_SERVER["REQUEST_METHOD"] === "DELETE") {
     // Sjekk om token er administrator
     if (!in_array($token, ADMIN_TOKENS)) {
@@ -114,7 +117,7 @@ if ($_SERVER["REQUEST_METHOD"] === "DELETE") {
     // Sjekk at epost er satt
     if (empty($data["epost"])) {
         http_response_code(400); // Bad Request
-        echo json_encode(["error" => "E-postadresse er påkravd."]);
+        echo json_encode(["error" => "E-postadresse er påkrevd."]);
         exit();
     }
 

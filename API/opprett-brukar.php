@@ -1,5 +1,7 @@
 <?php
 
+// Opprett brukar
+
 // Køyr tokenautentisering
 require_once "inkluderer/autentisering.php";
 
@@ -25,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Sjekk at epost og passord er satt
     if (empty($data["epost"]) || empty($data["passord"])) {
         http_response_code(400); // Bad Request
-        echo json_encode(["error" => "E-postadresse og passord er påkravd."]);
+        echo json_encode(["error" => "E-postadresse og passord er påkrevd."]);
         exit();
     }
 
@@ -46,7 +48,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         if($sth->execute([$data["epost"], $hash])) {
             http_response_code(201); // Created
-            //echo json_encode(["message" => "Brukar oppretta."]);
 
             // Opprette eingongskode
             $kode = rand(100000,999999);

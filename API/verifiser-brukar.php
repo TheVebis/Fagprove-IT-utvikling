@@ -1,5 +1,6 @@
 <?php
 
+// Verifiser brukar
 if ($_SERVER["REQUEST_METHOD"] === "PUT") {
     // Hent data frå forespørselen
     $json = file_get_contents("php://input");

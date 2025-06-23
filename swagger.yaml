@@ -1,0 +1,157 @@
+openapi: 3.0.0
+info:
+    title: Brukar API
+    description: API for administrasjon av brukarkontoar
+    version: 1.0.0
+servers:
+    - url: https://dittdomene.no/
+
+paths:
+    /API/oversikt-brukarar.php:
+        get:
+            summary: Oversikt over brukarar
+            description: Henter ei liste over alle brukara.
+            responses:
+                "200":
+                    description: Liste over brukere
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+                                        example: "Oversikt henta."
+                                    data:
+                                        type: array
+                                        items:
+                                            type: object
+                                            properties:
+                                                id:
+                                                    type: integer
+                                                    example: 1
+                                                epost:
+                                                    type: string
+                                                    example: "brukar@eksempel.com"
+                                                verifisert:
+                                                    type: boolean
+                                                    example: 0
+                "403":
+                    description: Krev opphøga rettar
+                "500":
+                    description: Serverfeil
+
+    /API/opprett-brukar.php:
+        post:
+            summary: Opprett ein ny bruker
+            description: Oppretter ein ny brukerkonto.
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                epost:
+                                    type: string
+                                    example: "bruker@eksempel.com"
+                                passord:
+                                    type: string
+                                    example: "sikkertPassord"
+                            required:
+                                - epost
+                                - passord
+            responses:
+                "201":
+                    description: Brukareb blei oppretta
+                "400":
+                    description: Ugyldige inputdata
+                "403":
+                    description: Ugyldig token
+                "500":
+                    description: Serverfeil
+
+    /API/administrer-brukar.php:
+        put:
+            summary: Endre passord
+            description: Endrer passordet til ein eksisterande brukar.
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                epost:
+                                    type: string
+                                    example: "brukar@eksempel.com"
+                                passord:
+                                    type: string
+                                    example: "gamaltPassord"
+                                nyttPassord:
+                                    type: string
+                                    example: "nyttSikkertPassord"
+                            required:
+                                - epost
+                                - nyttPassord
+                                - passord
+            responses:
+                "200":
+                    description: Nytt passord er satt
+                "400":
+                    description: Ugyldige inputdata
+                "401":
+                    description: Ugyldig e-postadresse eller passord
+                "500":
+                    description: Serverfeil
+
+        delete:
+            summary: Slett brukar
+            description: Sletter ein eksisterande brukerkonto ved å spesifisere e-postadressa.
+            parameters:
+                - name: epost
+                  in: query
+                  required: true
+                  description: E-postadressa til brukaren som skal slettast.
+                  schema:
+                      type: string
+                      example: "brukar@eksempel.com"
+            responses:
+                "200":
+                    description: Brukarkontoen blei sletta
+                "400":
+                    description: Ugyldige inputdata
+                "403":
+                    description: Krever opphøga rettar
+                "500":
+                    description: Serverfeil
+
+    /API/verifiser-brukar.php:
+        put:
+            summary: Verifiser bruker
+            description: Verifiserer en eksisterende brukerkonto.
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                epost:
+                                    type: string
+                                    example: "bruker@eksempel.com"
+                                verifiseringstoken:
+                                    type: string
+                                    example: "verifiseringstoken123"
+                            required:
+                                - epost
+                                - verifiseringstoken
+            responses:
+                "200":
+                    description: Brukeren ble verifisert
+                "400":
+                    description: Ugyldige inputdata
+                "404":
+                    description: Bruker ikke funnet
+                "500":
+                    description: Serverfeil
