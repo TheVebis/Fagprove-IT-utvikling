@@ -46,9 +46,40 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         if($sth->execute([$data["epost"], $hash])) {
             http_response_code(201); // Created
-            echo json_encode(["message" => "Brukar oppretta."]);
+            //echo json_encode(["message" => "Brukar oppretta."]);
 
-            //TODO opprette eingongskode og sende mail
+            // Opprette eingongskode
+            $kode = rand(100000,999999);
+
+            // Hente ID-en til brukaren
+            $sth = $dbh->prepare(
+                <<<SQL
+                    SELECT id
+                    FROM brukarkontoar
+                    WHERE 
+                        epost LIKE ?
+                SQL
+            );
+            $sth->execute([$data["epost"]]);
+            $brukar_id = $sth->fetch(PDO::FETCH_ASSOC);
+
+            // Legg eingongskoden inn i databasen
+            $sth = $dbh->prepare(
+                <<<SQL
+                    INSERT INTO eingongskodar (brukar_id, eingongskode)
+                    VALUES (?, ?)
+                SQL
+            );
+            if ($sth->execute([$brukar_id["id"], $kode])) {
+                // Send mail
+                // mail() fungerer ikkje utan server men er tatt med likevell for å demonstrere konseptet.
+                mail(
+                    "$data[epost]", 
+                    "Verifiser brukar", 
+                    "Hei, du har fått ein brukar. Bruk den vedlagte lenkja for å verifisere deg. https://fagprove.no/verifisering/?id=$brukar_id[id]&eingongskode=$kode"
+                );
+                echo json_encode(["message" => "Brukar oppretta.", "mail" => "https://fagprove.no/verifisering/?id=$brukar_id[id]&eingongskode=$kode"]);
+            }
         } else {
             http_response_code(500); // Internal Server Error
             echo json_encode(["error" => "Feil under lagring av brukar."]);

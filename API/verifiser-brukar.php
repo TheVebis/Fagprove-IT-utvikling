@@ -15,14 +15,14 @@ if ($_SERVER["REQUEST_METHOD"] === "PUT") {
     // Sjekk at id og eingongskode er satt
     if (empty($data["id"]) || empty($data["eingongskode"])) {
         http_response_code(400); // Bad Request
-        echo json_encode(["error" => "ID og eingongskode er påkravd."]);
+        echo json_encode(["error" => "ID og eingongskode er påkrevd.", "data" => $data]);
         exit();
     }
 
     // Lag databasen om den ikkje finst og få tilgang til den
     require_once "inkluderer/lag-database.php";
 
-    // Henter brukaren frå databasen
+    // Henter eingongskoden frå databasen
     $sth = $dbh->prepare(
         <<<SQL
             SELECT eingongskode
