@@ -119,3 +119,6 @@
 | 14:30 - 15:15    | Lage Swagger-dokumentasjon for endepunkt                                                |
 | 15:15 - 15:30    | Laste opp endringar i GitHub                                                            |
 | 15:30 - 16:30    | Matpause                                                                                |
+| 16:30 - 17:20    | Dokumentere dynamisk skjema                                                             |
+| 17:20 - 17:30    | Kort pause                                                                              |
+| 17:30 - 18:10    | Dokumentere om det å jobbe heimefrå                                                     |

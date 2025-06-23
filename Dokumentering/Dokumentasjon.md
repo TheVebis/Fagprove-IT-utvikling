@@ -1272,7 +1272,20 @@ Med denne funksjonen blir skjemaet dynamisk og enkelt å bruke for brukaren då 
 
 ## Jobbe heimefrå
 
-//TODO Skriv litt om det å jobbe heimefrå
+Jobbe heimefrå
+Eg valgte å jobbe heimefrå nokon dagar etter jobbtid og i helga. Ein fagprøve krever mykje arbeid og dokumentasjon av det arbeidet. Det var derfor nødvendig å ta i bruk helga i tillegg. I løpet av veka laga eg ein liten plan over kor mykje eg sku gjere i helga, men etterkvart blei det klart at denne planen var overambisiøs. Eg klarte rett og slett ikkje å halde fokuset oppe slik som eg ville.
+
+Det er mange distraksjonar når ein jobbar heime i staden for på arbeidsplassen. For det første er det eit heilt anna "kontor"-oppsett. Eg har eit gaming-oppsett med to skjermar og tastatur, men gjekk heller for å bruke laptopen min. Det fungerte fint, men det var ikkje heilt det same som mus, tastatur, og breiskjerm som eg har på kontoret. Den bærbare datamaskina er mindre og har ein annan skjermoppløysing, som gjer det vanskelegare å sjå fleire dokument samtidig, noko som er viktig når eg arbeider med mykje tekst og kode.
+
+Eg har ein HyperX-gamingstol, så det var ikkje så mykje å klage på komforten, men pulten min var litt liten og eg måtte ha armane mine oppå den varme laptoppen, så eg kunne ikkje støtte armane mine like komfortabelt. Dette sette ein del begrensningar på kor lenge eg klarte å halde fokus, då eg måtte ta fleire pausar som gjerne strekte seg lenger enn eg hadde tenkt.
+
+Det er og ting som husarbeid og husdyr som ber om merksemd og mat som kjem og forstyrrar arbeidet mitt. Med ein katt som ofte vil ha oppmerksomheit, er det lite som skal til før eg blir distrahert. Katten min, Vissi, er veldig glad i å "hjelpe" meg ved å sette seg på tastaturet eller ligge midt på pulten, noko som gjer det endå meir utfordrande å konsentrere seg.
+
+![Katt forstyrrer arbeidet](Bilder/vissi.jpg)
+
+Det er mange som føretrekk å jobbe heime, og eg kan sjå kvifor det appelerer. Auka fridom, redusert reisetid, ein slepp å styre med parkering, og ingen kollegaer kjem og forstyrrar arbeidet med å banke på døra. Det gjer at mange kan føle seg meir produktive i eit heimekontor. For min del, derimot, er det for mange distraksjonar heime til at eg vil prioritere det. Eg lik noko av strukturen og samhaldet ein får frå å jobbe på arbeidsplassen saman med andre. Interaksjon med kollegaer gir energi, og det er lettare å holde fokus når ein er i eit miljø dedikert til arbeid.
+
+Før eg vurderer å jobbe heime oftare, vil eg derfor sjå på måtar å minimere distraksjonar og kanskje lage eit meir tilpassa og komfortabelt arbeidsmiljø. Kanskje skulle eg investert i ein større pult og betre moglegheiter for å bruke det eksisterande utstyret mitt med laptopen for å gjenskape noko av den gode arbeidsopplevinga eg har på kontoret. Samtidig er det verdifullt å erkjenne mine eigne preferanser og behov når det kjem til arbeidshygiene, slik at eg kan finne den beste balansen mellom jobb og fritid.
 
 # Måndag 23.6
 
