@@ -199,12 +199,18 @@ function byttHandling() {
 	}
 }
 
+// Bytt rolle for testing
 function byttRolle() {
 	rolle = rolle === "administrator" ? "brukar" : "administrator";
 	document.getElementById("tittel").innerText = "Hei, " + rolle + "!";
 
 	if (rolle !== "administrator") {
 		document.getElementById("handling").value = "endre-passord";
+		document.getElementById("handling").style.display = "none";
+		document.getElementById("handling-brukar").style.display = "block";
+	} else {
+		document.getElementById("handling").style.display = "flex";
+		document.getElementById("handling-brukar").style.display = "none";
 	}
 	byttHandling();
 }

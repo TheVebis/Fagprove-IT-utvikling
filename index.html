@@ -23,25 +23,38 @@
 				<option value="endre-passord">Endre passord</option>
 				<option value="slett-brukar">Slett brukar</option>
 			</select>
-			<div id="epost" class="flex-column"> 
+
+			<p id="handling-brukar" style="display: none">Endre passord</p>
+
+			<div id="epost" class="flex-column">
 				<label for="epost-input">E-post</label>
 				<input id="epost-input" name="epost" />
 			</div>
 			<div id="passord" class="flex-column">
 				<label for="passord-input">Passord</label>
-				<input id="passord-input" name="passord" type="password"/>
+				<input id="passord-input" name="passord" type="password" />
 			</div>
 			<div id="nyttPassord" class="flex-column">
 				<label for="nyttPassord-input">Nytt passord</label>
-				<input id="nyttPassord-input" name="nyttPassord" type="password"/>
+				<input
+					id="nyttPassord-input"
+					name="nyttPassord"
+					type="password"
+				/>
 			</div>
 			<div id="gjentaPassord" class="flex-column">
 				<label for="gjentaPassord-input">Gjenta passord</label>
-				<input id="gjentaPassord-input" name="gjentaPassord" type="password"/>
+				<input
+					id="gjentaPassord-input"
+					name="gjentaPassord"
+					type="password"
+				/>
 			</div>
 			<button type="submit">Send</button>
 		</form>
+
 		<p id="svarMelding"></p>
+
 		<script src="public.js"></script>
 	</body>
 </html>

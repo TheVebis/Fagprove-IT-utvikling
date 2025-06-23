@@ -113,4 +113,8 @@
 | 12:10 - 12:30    | Få oversikt over kva som mangler                                                        |
 | 12:30 - 13:05    | Legge til tabell for oversikt-brukarar                                                  |
 | 13:05 - 13:15    | Kort pause                                                                              |
-| 13:15 -          | Teste og feilsøke tabell                                                                |
+| 13:15 - 13:40    | Teste og feilsøke tabell                                                                |
+| 13:40 - 14:20    | Begrense alternativa for vanlege brukarar                                               |
+| 14:20 - 14:30    | Lage CSS for tabell                                                                     |
+| 14:30 - 15:15    | Lage Swagger-dokumentasjon for endepunkt                                                |
+| 15:15 -          | Laste opp endringar i GitHub                                                            |
