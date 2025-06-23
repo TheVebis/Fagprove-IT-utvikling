@@ -31,7 +31,60 @@ function sendInn() {
 				if (svar.message) {
 					svarMelding.innerText = svar.message;
 					svarMelding.style.color = "black";
+
+					// Tabell med brukarar
+
+					// Fjerner eksisterande tabell
+					if (document.getElementById("tabell")) {
+						document.body.removeChild(
+							document.getElementById("tabell")
+						);
+					}
+
+					// Lage element til tabellen
+					const tabell = document.createElement("table");
+					const thead = document.createElement("thead");
+					const tr = document.createElement("tr");
+
+					tabell.id = "tabell";
+
+					// Lage tabellheader med alle nøkklane
+					for (const [nøkkel, verdi] of Object.entries(
+						svar.data[0]
+					)) {
+						const th = document.createElement("th");
+						th.innerText = nøkkel;
+						tr.appendChild(th);
+					}
+					// Legge tabellheader inn i tabellen
+					thead.appendChild(tr);
+					tabell.appendChild(thead);
+
+					// Tabell body
+					const tbody = document.createElement("tbody");
+
+					// Lager ny rad for kvart element
+					svar.data.forEach((element) => {
+						const tr = document.createElement("tr");
+
+						// Lager celler for kvar verdi
+						for (const [nøkkel, verdi] of Object.entries(element)) {
+							const td = document.createElement("td");
+							td.innerText = verdi;
+							tr.appendChild(td);
+						}
+
+						tbody.appendChild(tr);
+					});
+
+					// Legge tabell body inn i tabellen
+					tabell.appendChild(tbody);
+
+					// Legge tabellen på sida
+					document.body.appendChild(tabell);
 				}
+
+				// Feilmelding
 				if (svar.error) {
 					svarMelding.innerText = svar.error;
 					svarMelding.style.color = "red";

@@ -109,3 +109,8 @@
 | 10:00 - 10:25    | Brukargrensesnitt for verifisering                                                      |
 | 10:25 - 11:00    | Teste og feilsøke verifisering                                                          |
 | 11:00 - 11:30    | Legge til svar frå endepunkt i sida                                                     |
+| 11:30 - 12:10    | Lunsj                                                                                   |
+| 12:10 - 12:30    | Få oversikt over kva som mangler                                                        |
+| 12:30 - 13:05    | Legge til tabell for oversikt-brukarar                                                  |
+| 13:05 - 13:15    | Kort pause                                                                              |
+| 13:15 -          | Teste og feilsøke tabell                                                                |
