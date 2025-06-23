@@ -41,6 +41,7 @@
 			</div>
 			<button type="submit">Send</button>
 		</form>
+		<p id="svarMelding"></p>
 		<script src="public.js"></script>
 	</body>
 </html>

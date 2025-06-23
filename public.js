@@ -13,6 +13,9 @@ function sendInn() {
 	// Lager eit objekt med innhaldet i skjemaet
 	const entries = Object.fromEntries(formData.entries());
 
+	// Tekst for svar
+	const svarMelding = document.getElementById("svarMelding");
+
 	if (entries.handling === "oversikt-brukarar") {
 		fetch("/API/oversikt-brukarar.php", {
 			method: "GET",
@@ -25,7 +28,14 @@ function sendInn() {
 				return svar.json();
 			})
 			.then((svar) => {
-				if (svar.error) console.log(svar);
+				if (svar.message) {
+					svarMelding.innerText = svar.message;
+					svarMelding.style.color = "black";
+				}
+				if (svar.error) {
+					svarMelding.innerText = svar.error;
+					svarMelding.style.color = "red";
+				}
 			});
 	} else if (entries.handling === "opprett-brukar") {
 		fetch("/API/opprett-brukar.php", {
@@ -40,7 +50,14 @@ function sendInn() {
 				return svar.json();
 			})
 			.then((svar) => {
-				console.log(svar);
+				if (svar.message) {
+					svarMelding.innerText = svar.message;
+					svarMelding.style.color = "black";
+				}
+				if (svar.error) {
+					svarMelding.innerText = svar.error;
+					svarMelding.style.color = "red";
+				}
 			});
 	} else if (entries.handling === "endre-passord") {
 		fetch("/API/administrer-brukar.php", {
@@ -55,7 +72,14 @@ function sendInn() {
 				return svar.json();
 			})
 			.then((svar) => {
-				console.log(svar);
+				if (svar.message) {
+					svarMelding.innerText = svar.message;
+					svarMelding.style.color = "black";
+				}
+				if (svar.error) {
+					svarMelding.innerText = svar.error;
+					svarMelding.style.color = "red";
+				}
 			});
 	} else if (entries.handling === "slett-brukar") {
 		fetch("/API/administrer-brukar.php", {
@@ -70,7 +94,14 @@ function sendInn() {
 				return svar.json();
 			})
 			.then((svar) => {
-				console.log(svar);
+				if (svar.message) {
+					svarMelding.innerText = svar.message;
+					svarMelding.style.color = "black";
+				}
+				if (svar.error) {
+					svarMelding.innerText = svar.error;
+					svarMelding.style.color = "red";
+				}
 			});
 	}
 }

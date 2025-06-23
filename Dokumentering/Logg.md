@@ -100,3 +100,12 @@
 | 15:10 - 16:10    | Dokumentere fetch-kall                                                                  |
 | 16:10 - 16:20    | Kort pause                                                                              |
 | 16:20 - 17:00    | Dokumentere                                                                             |
+| **Måndag 23.6**  |
+| 08:00 - 08:40    | Starte dagen                                                                            |
+| 08:40 - 09:00    | Planlegge dagens oppgåver                                                               |
+| 09:00 - 09:45    | Oppdatere endepunkt for opprette brukar                                                 |
+| 09:45 - 09:55    | Oppdatere bane for database                                                             |
+| 09:55 - 10:00    | Kort pause                                                                              |
+| 10:00 - 10:25    | Brukargrensesnitt for verifisering                                                      |
+| 10:25 - 11:00    | Teste og feilsøke verifisering                                                          |
+| 11:00 - 11:30    | Legge til svar frå endepunkt i sida                                                     |
