@@ -313,7 +313,7 @@ Her lagrar skriptet brukaren og det hasha passordet i databasen. Spørsmålstegn
 
 #### SQL-injeksjon
 
-> SQL-injeksjon går ut på at brukaren sender inn SQL-kode som har som mål å kjøre i databasen, som f.eks. å slette ein tabell. Den gjer det med å avslutte den gjeldane spørringa og starte ei ny som brukaren har laga.
+> SQL-injeksjon går ut på at brukaren sender inn SQL-kode som har som mål å kjøre i databasen, tildømes å slette ein tabell. Den gjer det med å avslutte den gjeldane spørringa og starte ei ny som brukaren har laga.
 >
 > ![Exploits of a Mom](https://imgs.xkcd.com/comics/exploits_of_a_mom.png)
 >
@@ -388,7 +388,7 @@ fetch("/API/opprett-brukar.php", {
 	method: "POST",
 	headers: {
 		"content-type": "application/json",
-		X_TOKEN: "87y90br8732gf97f2121hfdkl8i",
+		X_TOKEN: "strengMedBokstavarOgTall",
 	},
 	body: JSON.stringify({
 		epost: "eksempel@fagprøve.no",
@@ -489,13 +489,13 @@ For å skille på desse må skriptet sjekke om brukaren er administrator eller i
 ```php
 // Administrator
 define("ADMIN_TOKENS", [
-    "87y90br8732gf97f2121hfdkl8i"
+    "strengMedBokstavarOgTall"
 ]);
 
 // Alle gyldige tokens
 define("TOKENS", [
     ...ADMIN_TOKENS,
-    "uav0por0s32kf90mao20c05jc43"
+    "strengMedTallOgBokstavar"
 ]);
 ```
 
@@ -961,3 +961,231 @@ I slutten av skjemaet er det ein `<button>` med typen `submit`. Den sender inn s
 Nederst i koden er det eit `<script>`-tag som henter inn JavaScript. `src`-attributtet seier kvar den finn JavaScript-fila. Ein kunne potensielt ha JavaScript-koden direkte i HTML-en under eit `<script>`-tag, men for oversikten sin del er det vanleg å ha separate filer for det.
 
 ### CSS
+
+CSS er det som gjer at nettsider ser ut slik dei gjer. Alle nettlesarar har ein standard CSS, kalla User Agent Stylesheet, som gjer at alle elementa får passande stil utan at ein treng ei eiga CSS-fil. Det er allikevel vanleg at webutviklarar lager sin eigen CSS for å få det slik ein vil ha det.
+
+-   [What is a User Agent Stylesheet? - GeeksForGeeks](https://www.geeksforgeeks.org/css/what-is-a-user-agent-stylesheet/)
+
+Dette er stilarket eg har på applikasjonen over:
+
+```css
+p,
+label {
+	font-size: medium;
+}
+
+button,
+select,
+input {
+	margin-bottom: 0.67em;
+	font-size: medium;
+}
+
+form {
+	padding: 0.5em;
+	background-color: lightgrey;
+}
+
+.flex-column {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+}
+```
+
+Du kjenner kanskje igjen fleire av taggane og klassen brukt i HTML-en. Dei er det ein kallar ein CSS-selektor, som seier kva element følgande stil skal gjelde på. Klassar har eit punktum forran namnet, som `.flex-column`, medan ID-ar har ein hashtag, tildømes `#passord-input`. Dette er for å differere mellom dei, då klassar og ID-ar kan ha samme namn som taggar.
+
+Etter selektoren kjem erklæringane, stilane som skal bli lagt på elementa, inni krøllparantesar. Kvar erklæring består av ein egenskap og ein verdi, som `background-color: lightgrey;`. Ein selektor kan ha fleire erklæringar, og det kan være fleire selektorar, separert med eit komma.
+
+```css
+button,
+select,
+input {
+	margin-bottom: 0.67em;
+	font-size: medium;
+}
+```
+
+Eg har satt at element med `button`-, `select`- og `input`-tagganne skal ha ein margin på `0.67em`, og skriftstørrelsen skal være `medium`. `em` er ein relativ eining som blir definert utifrå størrelesen på teksten i elementet. Å bruke `em` framfør piksler gjer at sida blir meir tilgjengelig, då den skalerer seg opp om nokon gjer skriftstørrelsen større. Eg har satt ein `margin-bottom` for å få avstand mellom elementa under slik at dei ikkje ligg heilt inntil kvarandre.
+
+```css
+form {
+	padding: 0.5em;
+	background-color: lightgrey;
+}
+```
+
+Eg har gitt skjemaet `padding`, som gjer at element inni formen blir dytta innover i element, vekk frå kanten. Eg har og gitt ein bakgrunnsfarge for å visualisere kva element som høyrer til skjemaet.
+
+```css
+.flex-column {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+}
+```
+
+Med `flex-column`-klassen har eg satt at alle elementer med den klassen, uavhengig av kva element det er, skal ha desse stilane. Klassar blir mykje brukt i CSS når ein vil gi uniform stil til mange element på ei side.
+
+`display: flex;` er ein artig sak ein kan gjere mykje med når det gjeld layout på sida. Med eigenskapane som følger med Flexbox kan ein lage ei fleksibel side som ser ut slik vi vil ha den. Det er for mykje under Flexbox til å forklare alt her, men eg skal forklare dei eigenskapane eg har brukt.
+
+`flex-direction` sett kva rettning elementa i Flexboxen skal bli vist. Eg har brukt `column` for å vise dei under kvarandre, men det går og an å bruke `row` for å vise elementa etter kvarandre.
+
+`align-items` seier kvar elementa i Flexboxen skal legge seg. Med `flex-start` skal dei legge seg i byrjinga på FLexboxen, som er venstresida i dette tilfellet.
+
+### JavaScript
+
+JavaScript er det som gjer applikasjonen dynamisk og som køyrer fetch-kalla til REST-API-et. Det er ein viktig del av applikasjonen, for utan den vil den ikkje få tilgang til endepunkta eg har laga.
+
+Følgande JavaScript-kode er det eg har satt opp til no. Eg skal forklare koden under.
+
+```js
+let rolle = "administrator";
+
+// Tilgjengeleg for testing
+const adminToken = "strengMedBokstavarOgTall";
+const brukarToken = "strengMedTallOgBokstavar";
+
+function sendInn() {
+	// Henter data frå skjemaet
+	const formData = new FormData(document.getElementById("form"));
+
+	// Lager eit objekt med innhaldet i skjemaet
+	const entries = Object.fromEntries(formData.entries());
+
+	if (entries.handling === "oversikt-brukarar") {
+		fetch("/API/oversikt-brukarar.php", {
+			method: "GET",
+			headers: {
+				"content-type": "application/json",
+				X_TOKEN: rolle === "administrator" ? adminToken : brukarToken,
+			},
+		})
+			.then((svar) => {
+				return svar.json();
+			})
+			.then((svar) => {
+				console.log(svar);
+			});
+	} else if (entries.handling === "opprett-brukar") {
+		fetch("/API/opprett-brukar.php", {
+			method: "POST",
+			headers: {
+				"content-type": "application/json",
+				X_TOKEN: rolle === "administrator" ? adminToken : brukarToken,
+			},
+			body: JSON.stringify(entries),
+		})
+			.then((svar) => {
+				return svar.json();
+			})
+			.then((svar) => {
+				console.log(svar);
+			});
+	} else if (entries.handling === "endre-passord") {
+		fetch("/API/administrer-brukar.php", {
+			method: "PUT",
+			headers: {
+				"content-type": "application/json",
+				X_TOKEN: rolle === "administrator" ? adminToken : brukarToken,
+			},
+			body: JSON.stringify(entries),
+		})
+			.then((svar) => {
+				return svar.json();
+			})
+			.then((svar) => {
+				console.log(svar);
+			});
+	} else if (entries.handling === "slett-brukar") {
+		fetch("/API/administrer-brukar.php", {
+			method: "DELETE",
+			headers: {
+				"content-type": "application/json",
+				X_TOKEN: rolle === "administrator" ? adminToken : brukarToken,
+			},
+			body: JSON.stringify(entries),
+		})
+			.then((svar) => {
+				return svar.json();
+			})
+			.then((svar) => {
+				console.log(svar);
+			});
+	}
+}
+
+function byttHandling() {
+	// Loggikk for dynamisk skjema kjem her
+}
+
+function byttRolle() {
+	rolle = rolle === "administrator" ? "brukar" : "administrator";
+	document.getElementById("tittel").innerText = "Hei, " + rolle + "!";
+
+	if (rolle !== "administrator") {
+		document.getElementById("handling").value = "endre-passord";
+	}
+	byttHandling();
+}
+```
+
+Den første linja i koden, `let rolle = "administrator";` sett ein variabel kalla `rolle` med teksten `administrator`. Det er for å halde styr på om klienten er administrator eller brukar.
+
+Det neste skriptet gjer er å definere to konstantar, `adminToken`og `brukarToken`, slik at ein kan sende dei inn i fetch-kallet. Desse ville vert kopla til brukaren som er innlogga, men sidan applikasjonen ikkje har innlogging ligg dei er.
+
+> Konstantar og variablar liknar på kvarandre men fungerer på litt forskjellig måtar. Konstantar blir satt med `const` og kan ikkje bli endra på seinare i koden. Som namnet tilseier er den konstant. Variablar blir satt med `let` eller `var`, og kan bli endra etter kvart i koden. Rollen til brukaren er noko som kan bli endra med `byttRolle`-funksjonen, mens tokens skal ikkje bli endra.
+
+#### Send inn
+
+Den første og viktigaste funkjsonen i skriptet er `sendInn`. Den skal bli køyrt når brukaren sender inn skjemaet til endepunktet. Som ein såg tidligare i HTML-koden blir den køyrt av `onsubmit`-hendinga på skjemaet.
+
+Funksjonen startar med å hente informasjonen frå skjemaet i ein konstant kalla `formData`. For å bryte koden ned: `document.getElementById("form")` finner fram til skjemaet, sidan det har ID-en `form`. `new Formdata(...)` tar så å legg dette i eit format med felta og verdiane til skjemaet.
+
+Skriptet tar `formData` og lager eit objekt frå oppføringane der, og plasserer det i `entries`. Nå kan skriptet enkelt få tilgang til informasjonen i frå skjemaet. Tildømes vil `entries.handling` vere kva handling som er blitt valgt i skjemaet.
+
+No kjem den spennande delen. Ut i frå kva handling som er valgt skal forksjellige fetch-kall køyrast. Dette blir gjort med ein `if...else if`-settning. Kvar handling blir sjekka opp mot `entries.handling` og viss det er handling som blir valgt blir det skriptet køyrt.
+
+Fetch-kalla er veldig like, så eg treng ikkje å gå over alle, men skal forklare korleis dei fungerer. `fetch()` henter eller sender data til ei adresse, i dette tilfellet endepunktet ein brukar.
+
+Dataen som blir sendt består av tre deler: `method`, `headers`, og `body`.
+
+Metoden er den relevante metoden som endepunktet treng.
+
+Headers er informasjon om dataen som blir sendt som `content-type` som forklarer kva type data det er. Her er det JSON, så den er satt til `applicationn/json`. Token blir og sendt her i form av `X_TOKEN`. Kva token som blir sendt er bestemt frå kva rolle som er valgt.
+
+Dette blir køyrt gjennom ein "ternary"-operator. Den er eit alternativ til `if...else` og tar tre operander: Ein betingelse fulgt av eit spørsmålstegn `?`, eit uttrykk for kva som skal skje viss betingelsen er sann fulgt av ein kolon `:`, og til slutt eit uttryk for om betingelsen er usann. Når dette blir satt som del av ein konstant, variabel eller i dette tilfellet ein header blir headeren satt til eit av dei uttrykka. Her dåå bli `X_token` enten satt til `adminToken` eller `brukarToken` ut i frå aktiv brukar.
+
+Body er sjølve innhaldet i forespørselen og inneheld relevant informasjon. Her blir `entries` gjort om frå eit objekt til JSON med hjelp av `JSON.stringify()`. Merk at `oversikt-brukarar` ikkje har noko `body` då `get`-metoden ikkje treng noko `body`.
+
+`fetch` returnerer ein lovnad som blir fullført når svaret er tilgjengeleg. Det er og ein asynkron-funksjon, noko som betyr at resten av skriptet fortsetter med å køyre mens fetch-kallet venter på eit svar. For å vente på det svaret må det leggast i ein `.then()`.
+
+Når svaret kjem tilbake frå serveren kjører skriptet ein pilfunksjon (`() => {...}`) der `svar` representerer svaret frå serveren. Vi vil ha svaret i JSON-format, så må kjøre `svar.json()` som blir returnert som ein ny lovnad.
+
+Når svaret frå `svar.json()` kjem kan vi gjere ting med svaret frå serveren. Det er som regel berre ein beskjed om at handlingen var vellykka eller eventuelle feilkodar, med unntak av `oversikt-brukarar` som returnerer ein tabell frå databasen. Til nå har eg berre lagt `svar` i ein `console.log()` som viser svaret i konsollen i nettlesaren. Eg skal komme tilbake og gjere meir med det seinare.
+
+#### Bytt handling
+
+Denne funksjonen er ikkje blitt utvikla endå. Det den skal gjer er å få skjemaet til å bli dynamisk ut i frå kva handling som er valgt. Eg kjem tilbake til det.
+
+#### Bytt rolle
+
+Denne funksjonen blir brukt for å bytte rollen til brukaren. Det er berre for testgrunnar, då applikasjonen ikkje har innlogging av brukar.
+
+Det første funksjonen gjer er å bytte `rolle`-variabelen til den ikkje-aktive rolla. Dette blir gjort med ein ternary. Viss `rolle` er `"administrator"` blir den satt til `"brukar"` og motsatt.
+
+//TODO dokumenter resten av funksjonen
+
+# Laurdag 21.6
+
+## Dynamisk form
+
+//TODO Dokumenter dynamisk form
+
+# Sundag 22.6
+
+## Jobbe heimefrå
+
+//TODO Skriv litt om det å jobbe heimefrå
+
+# Måndag 23.6

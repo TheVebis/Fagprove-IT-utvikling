@@ -94,3 +94,9 @@
 | 15:30 - 16:00    | Lunsjpause                                                                              |
 | 16:00 - 17:00    | Dokumentere HTML                                                                        |
 | **Sundag 22.6**  |
+| 12:50 - 13:40    | Dokumentere CSS                                                                         |
+| 14:30 - 15:00    | Dokumentere JS                                                                          |
+| 15:00 - 15:10    | Mate katten                                                                             |
+| 15:10 - 16:10    | Dokumentere fetch-kall                                                                  |
+| 16:10 - 16:20    | Kort pause                                                                              |
+| 16:20 - 17:00    | Dokumentere                                                                             |
