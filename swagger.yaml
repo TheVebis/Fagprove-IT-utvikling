@@ -128,8 +128,8 @@ paths:
 
     /API/verifiser-brukar.php:
         put:
-            summary: Verifiser bruker
-            description: Verifiserer en eksisterende brukerkonto.
+            summary: Verifiser brukar
+            description: Verifiserer ein eksisterende brukarkonto.
             requestBody:
                 required: true
                 content:
@@ -137,21 +137,19 @@ paths:
                         schema:
                             type: object
                             properties:
-                                epost:
+                                id:
                                     type: string
-                                    example: "bruker@eksempel.com"
-                                verifiseringstoken:
+                                    example: "1"
+                                eingongskode:
                                     type: string
-                                    example: "verifiseringstoken123"
+                                    example: "123456"
                             required:
-                                - epost
-                                - verifiseringstoken
+                                - id
+                                - eingongskode
             responses:
                 "200":
-                    description: Brukeren ble verifisert
+                    description: Brukaren blei verifisert
                 "400":
                     description: Ugyldige inputdata
-                "404":
-                    description: Bruker ikke funnet
                 "500":
                     description: Serverfeil
