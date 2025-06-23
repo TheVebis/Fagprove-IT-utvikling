@@ -117,4 +117,5 @@
 | 13:40 - 14:20    | Begrense alternativa for vanlege brukarar                                               |
 | 14:20 - 14:30    | Lage CSS for tabell                                                                     |
 | 14:30 - 15:15    | Lage Swagger-dokumentasjon for endepunkt                                                |
-| 15:15 -          | Laste opp endringar i GitHub                                                            |
+| 15:15 - 15:30    | Laste opp endringar i GitHub                                                            |
+| 15:30 - 16:30    | Matpause                                                                                |

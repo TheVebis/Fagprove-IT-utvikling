@@ -166,10 +166,17 @@ function byttHandling() {
 	const nyttPassord = document.getElementById("nyttPassord");
 	const gjentaPassord = document.getElementById("gjentaPassord");
 
+	// Gøymer alle felta
 	epost.style.display = "none";
 	passord.style.display = "none";
 	nyttPassord.style.display = "none";
 	gjentaPassord.style.display = "none";
+
+	// Tar vekk at felta er nødvendige
+	epost.querySelector("input").required = false;
+	passord.querySelector("input").required = false;
+	nyttPassord.querySelector("input").required = false;
+	gjentaPassord.querySelector("input").required = false;
 
 	// Sjå alle brukarar
 	if (handling === "oversikt-brukarar") {
@@ -181,6 +188,10 @@ function byttHandling() {
 		epost.style.display = "flex";
 		passord.style.display = "flex";
 		gjentaPassord.style.display = "flex";
+
+		epost.querySelector("input").required = true;
+		passord.querySelector("input").required = true;
+		gjentaPassord.querySelector("input").required = true;
 	}
 
 	// Endre passord
@@ -188,14 +199,21 @@ function byttHandling() {
 		epost.style.display = "flex";
 		if (rolle !== "administrator") {
 			passord.style.display = "flex";
+			passord.querySelector("input").required = true;
 		}
 		nyttPassord.style.display = "flex";
 		gjentaPassord.style.display = "flex";
+
+		epost.querySelector("input").required = true;
+		nyttPassord.querySelector("input").required = true;
+		gjentaPassord.querySelector("input").required = true;
 	}
 
 	// Slett brukar
 	if (handling === "slett-brukar") {
 		epost.style.display = "flex";
+
+		epost.querySelector("input").required = true;
 	}
 }
 
@@ -206,9 +224,12 @@ function byttRolle() {
 
 	if (rolle !== "administrator") {
 		document.getElementById("handling").value = "endre-passord";
+
+		// Fjerne alternativa for handlingar
 		document.getElementById("handling").style.display = "none";
 		document.getElementById("handling-brukar").style.display = "block";
 	} else {
+		// Legge til alternativa for handlingar
 		document.getElementById("handling").style.display = "flex";
 		document.getElementById("handling-brukar").style.display = "none";
 	}

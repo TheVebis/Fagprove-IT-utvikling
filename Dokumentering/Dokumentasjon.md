@@ -1125,6 +1125,14 @@ function byttRolle() {
 
 	if (rolle !== "administrator") {
 		document.getElementById("handling").value = "endre-passord";
+
+		// Fjerne alternativa for handlingar
+		document.getElementById("handling").style.display = "none";
+		document.getElementById("handling-brukar").style.display = "block";
+	} else {
+		// Legge til alternativa for handlingar
+		document.getElementById("handling").style.display = "flex";
+		document.getElementById("handling-brukar").style.display = "none";
 	}
 	byttHandling();
 }
@@ -1174,13 +1182,91 @@ Denne funksjonen blir brukt for å bytte rollen til brukaren. Det er berre for t
 
 Det første funksjonen gjer er å bytte `rolle`-variabelen til den ikkje-aktive rolla. Dette blir gjort med ein ternary. Viss `rolle` er `"administrator"` blir den satt til `"brukar"` og motsatt.
 
-//TODO dokumenter resten av funksjonen
+Om brukaren ikkje er administrator skal ein berre få endre passord, ikkje dei andre handlingane. Dette blir gjhort med å sette handlingen til `"endre-passord"`, skjule alternativa, og i staden for vise ein tekst der det står Endre passord. Om brukaren bytter rolle igjen blir teksten fjerna og handlingane vist igjen.
+
+Denne funksjonen køyrer og `byttHandling` for å oppdatere skjemaet for den nye rolla.
 
 # Laurdag 21.6
 
-## Dynamisk form
+## Dynamisk skjema
 
-//TODO Dokumenter dynamisk form
+Skjemaet skal vere dynasmisk ut i frå kva handling som er valgt. Funksjonen `byttHandling` skal ta seg av å gøyme og vise relevante felt for den handlinga.
+
+```js
+const handling = document.getElementById("handling").value;
+const epost = document.getElementById("epost");
+const passord = document.getElementById("passord");
+const nyttPassord = document.getElementById("nyttPassord");
+const gjentaPassord = document.getElementById("gjentaPassord");
+```
+
+Først henter funksjonen dei relevante elementa som skal brukast i funksjonen. Sidan vi berre er interresert i verdien til nedtrekksmenyen `handling` treng vi berre å hente ut `value`.
+
+```js
+// Gøymer alle felta
+epost.style.display = "none";
+passord.style.display = "none";
+nyttPassord.style.display = "none";
+gjentaPassord.style.display = "none";
+```
+
+For å gjere det enkelt for funksjonen tar den å gøymer alle felta først. Merk at det er sjølve `div`-en som blir skjult, som inkluderer merkelappen og skrivefeltet.
+
+```js
+// Tar vekk at felta er nødvendige
+epost.querySelector("input").required = false;
+passord.querySelector("input").required = false;
+nyttPassord.querySelector("input").required = false;
+gjentaPassord.querySelector("input").required = false;
+```
+
+Den fjerner og `required` frå felta. Sidan `epost` osv. er divane må ein bruke ein `querySelector()` på den for å finne `input`-elementet. `querySelector()` fungerer slik at den går ned i barn-elementa til elementet den blir kalt på og via ein CSS Selektor returnerer det første elementet med den selektoren.
+
+```js
+// Opprett brukar
+if (handling === "opprett-brukar") {
+	epost.style.display = "flex";
+	passord.style.display = "flex";
+	gjentaPassord.style.display = "flex";
+
+	epost.querySelector("input").required = true;
+	passord.querySelector("input").required = true;
+	gjentaPassord.querySelector("input").required = true;
+}
+```
+
+Ut i frå kva handling som er valgt blir felta vist og satt til `required`, slik at skjemaet ikkje kan bli sendt inn utan at dei er fyllt ut. Dette er i utgongspunktet det same for alle handlingar, så eg legg berre ved resten av funkjsonen under.
+
+```js
+// Sjå alle brukarar
+if (handling === "oversikt-brukarar") {
+	// Treng ikkje gjer noko
+}
+
+// Endre passord
+if (handling === "endre-passord") {
+	epost.style.display = "flex";
+	if (rolle !== "administrator") {
+		passord.style.display = "flex";
+		passord.querySelector("input").required = true;
+	}
+	nyttPassord.style.display = "flex";
+	gjentaPassord.style.display = "flex";
+
+	epost.querySelector("input").required = true;
+	nyttPassord.querySelector("input").required = true;
+	gjentaPassord.querySelector("input").required = true;
+}
+
+// Slett brukar
+if (handling === "slett-brukar") {
+	epost.style.display = "flex";
+
+	epost.querySelector("input").required = true;
+}
+```
+
+Med denne funksjonen blir skjemaet dynamisk og enkelt å bruke for brukaren då berre nødvendige felt blir vist. Det fine med å gjere det dynamisk med JavaScript er at felta fortsatt er der, så om brukaren held på å fylle ut skjemaet, men finn ut at den må bytte handling kan ein enkelt gjere det utan at felta blir viska ut og felt som blir brukt i samme handling blir der fortsatt utan å måttast fyllast ut på nytt.
 
 # Sundag 22.6
 
@@ -1189,3 +1275,17 @@ Det første funksjonen gjer er å bytte `rolle`-variabelen til den ikkje-aktive 
 //TODO Skriv litt om det å jobbe heimefrå
 
 # Måndag 23.6
+
+//TODO Skrive om oppdatert endepunkt
+
+//TODO Brukargrensesnitt for verifisering
+
+//TODO Legge til svar frå endepunkt i sida
+
+//TODO tabell for oversikt-brukarar
+
+//TODO Begrense alternativa for vanlege brukarar
+
+//TODO CSS for tabell
+
+//TODO Swagger-dokumentasjon
