@@ -1651,6 +1651,63 @@ Eg skal utføre ein test av applikasjonen for å sjekke at den og API-et virker 
 
 Målet med desse testane er å demonstrere korleis applikasjonen fungerer for ulike brukarar og kva funksjonalitet den har. Den er og meint for å finne svakheiter i koden som evntuelle angriparar vil prøve å utnytte.
 
+### Utførelse
+
+#### Administrator
+
+Som administrator har ein tilgong til alle dei forskjellege endepunta i API-et. Ein administrator kan opprette og slette brukarar, samt endre passord om det sku være nødvendeg. Administrator kan og få ein oversikt over alle brukarane.
+
+Når eg kjem inn i applikasjonen blir eg møtt av ein velkomstmelding og skjemaet som ber meg om å velge ei handling. Send-knappen er og framme, og eg byrja å lure på om eg kan sende inn utan å velge handling. Eg testar.
+
+![Brukargrensesnitt](Bilder/Test_1.png)
+
+Ingen respons. Etter å ha sjekka i både konsollen og nettverk tyder alt på at ingenting har skjedd. Ein kjapp kikk i kildekoden viser at ingen kall blir køyrt når handling er tom. Det kan være ein ide å legge til ei melding der.
+
+Eg går vidare med å velge handling. Då får eg dei fire valga som korresponderer med dei fire endepunkta. Eg velg "Sjå alle brukarar" for å teste det. Den krev ingen input, så eg berre trykkar send.
+Eg får då ein melding der det står "Oversikt henta." og ein fin tabell med alle brukarane.
+
+![Oversikt brukarar](Bilder/Test_2.png)
+
+Alt bra så langt. Eg vil no opprette ein ny brukar kalla "test@fagprøve.no". Eg velg "Opprett brukar" i lista over handlingar. Eg får då opp tre felt med namna "E-post", "Passord" og "Gjenta passord". Eg fyller dei ut, men "gløymer" å legge til rett e-post. Gjenta passord matcher heller ikkje med passord. Eg sender inn.
+
+![Gløymd @](Bilder/Test_3.png)
+
+Her får eg opp ein feilmelding med at "E-post" manglar @. Dette skjer fordi feltet er satt til typen `email`. Hadde den ikkje vert det ville skjemaet blitt sendt inn, men eg hadde fått ein feilmelding tilbake at eposten ikkje var gyldig, då eg har satt inn ein sjekk på det på serversida i tillegg.
+
+Eg legg inn rett e-postadresse, men har fortsatt ikkje fiksa "Gjenta passord". Eg får sjå korleis det går. Eg sender inn igjen.
+
+![Ikkje like passord](Bilder/Test_4.png)
+
+Eg fekk ein tilbakemelding om at brukaren var blitt oppretta. Det er ikkje heilt bra. Det er ikkje lagt inn noko sjekk på om passorda er like. Det er ikkje veldig kritisk då det er mest for brukaren si eiga del slik at ein skal huske passordet betre, men det burde vert lagt inn. Det er noko eg må sjå på seinare. Brukaren blei jo oppretta, så det er jo bra. Eg hentar tabellen igjen og sjekkar at den ligg der.
+
+![Uventa domene](Bilder/Test_5.png)
+
+Der fekk eg ei lita øverrasking. Sjølv om eg skreiv `test@fagprøve.no` blei det satt `test@xn--fagprve-u1a.no`. Eg mistenkjer at det har noko med Ø-en å gjere, og etter litt feilsøking finn eg problemet: Felt med typen `email` tillat ikkje spesielle karakterer som Ø. Når typen er `text` går det heilt fint med spesialkarakterer. Den enklaste fiksen på dette er å endre typen til tekst. Eg har verifisering med at e-posten er ein gyldig e-postadresse på serveren, så det skal ikkje skape nokon problemer. Eg endrer feltet til typen tekst og fortsett med det framover i testen slik at ein skal sleppe slike feil.
+
+Etter å ha slette brukaren med den spesielle e-epostadressa prøver eg å legge til `test@fagprøve.no` igjen. Eg får då feilmelding frå serveren om at "E-postadresse må være i gyldig e-post format." Tydelegvis er dette ein ting med `filter_var()` og.
+
+![Ugyldig format](Bilder/Test_6.png)
+
+Då må eg berre insjå realiteten og bruke `test@fagprove.no` i staden for. Det er jo ikkje vanleg at domener har spesialkarakterer i utgongspunktet så det er ein veldig logisk ting.
+
+![Oppretta brukar](Bilder/Test_7.png)
+
+Fortsatt så er ikkje "Passord" og "Gjenta passord" like, men det er eit vedvarande problem eg får fikse etterpå.
+
+No vil eg endre passordet på `test@fagprove.no`. Det kan jo hende at brukaren har gløymd passordet sitt eller noko anna har skjedd som krev at administrator sett eit nytt eit. Eg legg då inn eit nytt passord og sender det inn.
+
+![Endre passord](Bilder/Test_8.png)
+
+Flott! Passord er endra og brukaren kan ta i bruk det nye passordet. Neste punkt på lista er å slette ein brukar. Eg vil prøve å slette `test@fagprove.com` (som ikkje finnst) og sjå kva som skjer då.
+
+![Slette feil brukar](Bilder/Test_9.png)
+
+Eg får beskjed om at denne ikkje-eksisterande brukaren er sletta. Det er litt uheldeg, då den ikkje kan ha blitt sletta. Eg trudde eg hadde lagt inn sjekk om brukarkontoen finnst først, men tydelegvis er det ikkje satt inn rett. Eg må sjå meir på dette seinare.
+
+Eg vil fortsatt slette den faktiske brukaren `test@fagprove.no`, så eg skriv det inn i feltet og sender inn. Eg får beskjed om at brukaren er sletta, og eg sjeker tabellen igjen og sjår at det er den.
+
+![Tabell](Bilder/Test_10.png)
+
 ## Brukarveiledning
 
 //TODO readme.md

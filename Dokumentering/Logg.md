@@ -141,3 +141,6 @@
 | 10:20 - 10:25    | Kort pause                                                                              |
 | 10:25 - 10:30    | Publisere GitHub repository                                                             |
 | 10:30 - 10:40    | Sette inn maks vidde på skjemaet                                                        |
+| 10:40 - 11:30    | Dokumentere og planlegge test                                                           |
+| 11:30 - 12:00    | Lunsj                                                                                   |
+| 12:00 -          | Utføre test                                                                             |
