@@ -144,3 +144,6 @@
 | 10:40 - 11:30    | Dokumentere og planlegge test                                                           |
 | 11:30 - 12:00    | Lunsj                                                                                   |
 | 12:00 - 14:30    | Utføre og dokumentere test                                                              |
+| 14:30 - 14:45    | Hente kakao                                                                             |
+| 14:45 - 15:15    | Skrive brukerveiledning                                                                 |
+| 15:15 - 15:20    | Kort pause                                                                              |
