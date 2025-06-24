@@ -124,8 +124,6 @@ if ($_SERVER["REQUEST_METHOD"] === "DELETE") {
     // Lag databasen om den ikkje finst og få tilgang til den
     require_once "inkluderer/lag-database.php";
 
-    //TODO sjekk om brukarkontoen finst først
-
     try {
         // Slett brukarkonto
         $sth = $dbh->prepare(

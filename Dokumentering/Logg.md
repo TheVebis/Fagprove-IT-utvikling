@@ -147,3 +147,5 @@
 | 14:30 - 14:45    | Hente kakao                                                                             |
 | 14:45 - 15:15    | Skrive brukerveiledning                                                                 |
 | 15:15 - 15:20    | Kort pause                                                                              |
+| 15:20 - 15:50    | Skrive brukarveiledning                                                                 |
+| 15:50 - 16:40    | Sjå gjennom dokumentasjonen                                                             |

@@ -194,7 +194,7 @@ Ole Brede har laga ei løysing for å køyre PHP lokalt på maskina, men den had
 
 ## Sikkerheit med token
 
-For å forsikre seg at ikkje kven som helst kan bruke APIet og byrje å opprette og slette brukarar sett eg inn sikkerheit med hjelp av ein token. I headers som blir sendt inn skal det være ein X_TOKEN som blir lest og sjekka opp mot gyldige tokens.
+For å forsikre seg at ikkje kven som helst kan bruke API-et og byrje å opprette og slette brukarar sett eg inn sikkerheit med hjelp av ein token. I headers som blir sendt inn skal det være ein `X_TOKEN` som blir lest og sjekka opp mot gyldige tokens.
 
 ```php
 // Sjekk om server har token
@@ -216,6 +216,21 @@ $token = $_SERVER["HTTP_X_TOKEN"];
 
 Skriptet krever `tokens.php` som inneheld `TOKENS`-konstanten som er ein array med gyldige tokens. Tokenen til føre­spurnaden blir og lagra som `$token`.
 
+```php
+// Administrator
+define("ADMIN_TOKENS", [
+    // Administratortokens
+]);
+
+// Alle gyldige tokens
+define("TOKENS", [
+    ...ADMIN_TOKENS,
+    // Brukartokens
+]);
+```
+
+I `tokens.php` blir `ADMIN_TOKENS` og `TOKENS` satt som arrays med gyldige tokens. `TOKENS` får og alle tokens frå `ADMIN_TOKENS` med `...ADMIN_TOKENS`.
+
 ```PHP
 // Sjekk om token er gyldig
 if (!in_array($token, TOKENS)) {
@@ -233,7 +248,7 @@ Med å kjøre fetch-kall utan token, med feil token og med rett token får vi de
 
 ## Opprette brukar
 
-Eit av endepunkta til APIet er at ein skal kunne opprette brukarar i databasen.
+Eit av endepunkta til API-et er at ein skal kunne opprette brukarar i databasen.
 
 ```php
 // Kjør tokenautentisering
@@ -279,17 +294,17 @@ $json = file_get_contents("php://input");
 $data = json_decode($json, true);
 ```
 
-Denne koden henter så ut innhaldet i føre­spurnaden og dekoder det frå JSON til object som PHP forstår.
+Denne koden henter så ut innhaldet i føre­spurnaden og dekoder det frå JSON til eit objekt som PHP forstår.
 
 #### JSON
 
 > JSON (JavaScript Object Notation) er eit av dei mest brukte formata å strukturere og sende data mellom ulike programmeringsspråk og mellom klient og server. Det er lett for både menneske og maskinar å lese og skrive det, og har brei støtte blant programmeringspråka. Formatet er og veldig kompakt som hjelp med å redusere bandbredde og lastetid i applikasjoner og nettstader.
 >
-> Her bruker eg det for å sende data som APiet treng for å opprette brukarkonto: e-postadresse og passord.
+> Her bruker eg det for å sende data som API-et treng for å opprette brukarkonto: e-postadresse og passord.
 
 `!empty($data)` og `!empty($data["epost"]) && !empty($data["passord"])` sjekkar om det faktisk er innhald i føre­spurnaden, og om det er innhaldet endepunktet treng.
 
-`$hash = password_hash($data["passord"], PASSWORD_DEFAULT);` hashar passordet. Det andre parameteret i `password_hash`, er kva algoritme den skal bruke. Eg har brukt `PASSWORD_DEFAULT` som bruker bvcrypt algoritmen for hashing og er den PHP anbefaler.
+`$hash = password_hash($data["passord"], PASSWORD_DEFAULT);` hashar passordet. Det andre parameteret i `password_hash`, er kva algoritme den skal bruke. Eg har brukt `PASSWORD_DEFAULT` som bruker bvcrypt-algoritmen for hashing og er den PHP anbefaler.
 
 #### Hashing
 
@@ -379,7 +394,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 `try {...} catch {...}` er og satt inn då skriptet prøver å legge til ein brukar i databasen. Om det sku oppstå ein feil, som at ein brukar med same epost-adresse blir forsøkt å legges til, vil forsøket mislykkast og feilmeldinga fanga opp av `catch`
 
-Når eg no prøvar å kjøre eit fetch-kall inn mot APIet får eg forventa resultat.
+Når eg no prøvar å kjøre eit fetch-kall inn mot API-et får eg forventa resultat.
 
 Fetch-kall brukt under testing:
 
@@ -397,7 +412,7 @@ fetch("/API/opprett-brukar.php", {
 });
 ```
 
--   Sendar eg eit kall utan `body` eller manglar epost eller passord, får eg ein 400 melding om at eg manglar data.
+-   Sendar eg eit kall utan `body` eller manglar `epost` eller `passord`, får eg ein 400 melding om at eg manglar data.
 
 -   Sendar eg fullstendeg fetch-kall med alt som skal med får eg ein 201-melding tilbake med at brukaren er oppretta.
 
@@ -417,7 +432,9 @@ Eg blei råda av Terje Rudi å ta backup av prosjektet mitt på GitHub, då det 
 
 Som eg skreiv i planlegginga mi er GitHub ein plattform for utviklarar som brukast til å lagra, administrere og dele kodeprosjekt.
 
-//TODO: Skrive meir om GitHub.
+GitHub er ein nettbasert plattform for versjonskontroll og samarbeid, spesielt populær blant utviklara. Den brukar Git, eit versjonskontrollsystem, for å spore endringer i kildekode og lar fleire personar jobbe saman på prosjekter.
+
+GitHub er ein viktig plattform i utviklingsmiljøet og brukast av mange selskap og individuelle utviklarar for å dele og samarbeide om programvareprosjekter.
 
 ### Laste opp på GitHub med VS Code
 
@@ -455,7 +472,7 @@ if ($_SERVER["REQUEST_METHOD"] === "PUT") {
     require_once "inkluderer/lag-database.php";
 
     try {
-        // Sett ny brukar inn i databasen med epost og hasha passord
+        // Utfør handling i database
         $sth = $dbh->prepare(
 
         );
@@ -465,7 +482,7 @@ if ($_SERVER["REQUEST_METHOD"] === "PUT") {
             echo json_encode(["message" => ""]);
         } else {
             http_response_code(500); // Internal Server Error
-            echo json_encode(["error" => "Feil under lagring av brukar."]);
+            echo json_encode(["error" => "Feil under utføring av handling."]);
         }
 
     } catch (PDOException $feil) {
@@ -476,12 +493,9 @@ if ($_SERVER["REQUEST_METHOD"] === "PUT") {
 }
 ```
 
-//TODO Fikse litt kommentarar i eksempelkoden
-
 Det første eg lagar er å prosessen for å endre passord. Det er to måtar å endre et passord på:
 
 -   Brukar endrer passordet sjølv. Då må brukaren skrive inn det gamle passordet i tillegg for autentisering.
-
 -   Administrator setter nytt passord på ein brukar. Då trengs bare e-postadressa og det nye passordet.
 
 For å skille på desse må skriptet sjekke om brukaren er administrator eller ikkje. Det gjør den via tokens. Det er definert kva tokens som har administratorrettar og kva tokens som berre er vanlege brukarar.
@@ -555,7 +569,7 @@ if ($brukar == false || !password_verify($data["passord"], $brukar["passord_hash
 
 Denne koden sjekker at brukaren finst med `$brukar == false` og sjekker om passordet som er gitt stemmer med passordet i databasen. I `password_verify()` er det første parameteret passordet som blei sendt inn og andre parameteret som er lagra i databasen. `password_verify()` hashar det innsendte passordet og samanliknar det med hashen i databasen.
 
-Om brukaren ikkje finst eller passordet matchar ikkje sender REST-API-et ein feilmelding med at e-postadressa eller passordet er ugyldig.
+Om brukaren ikkje finst eller passordet ikkje matchar sender REST-API-et ein feilmelding med at e-postadressa eller passordet er ugyldig.
 
 Om forespørselen har ein administrator-token sjår denne koden slik ut i staden for:
 
@@ -814,11 +828,15 @@ Ein ting som er greit å bite seg merke i er at om SQL-spørringa er ein suksess
 
 I samtalen min med prøvenemnda oppdaga vi at vi litt forskjellege tolkingar av oppgåva. Eg hadde tolka den som om eg berre sku lage eit REST-API, og hadde planlagt å lage det mest mogleg uavhengeg av applikasjonen som spør etter det. Dette er for at kven som helst skal kunne bruke REST-API-et i sine eigne applikasjonar utan at dei må gjere endringar med koden min.
 
+Prøvenemnda tolka oppgåva som at eg sku lage ein applikasjon i tillegg som skal køyre dette API-et. Dei innrømma at oppgåva kunne tolkast på måten eg hadde tolka den på, og tok ansvar for at dei hadde godkjent ei oppgåve som ikkje var formulert slik som dei hadde tenkt. Eg kan ta på meg litt ansvar sjølv då eg ikkje hadde kontakta dei når eg var usikker, men i staden spurte ein kollega.
+
+Vi blei einige om at endringa som sku komme i løpet av gjennomføringa sku då være eit enkelt brukargrensesnitt som brukar REST-API-et eg lagar. Det skal og være mogleg å opprette kontoar, verifisere og godkjenne kontoar.
+
 # Fredag 20.6
 
 ## Verifisering av brukar
 
-Det siste endepunktet i REST-API-et er at ein brukar skal kunne verifisere seg. Då er planen at ein e-post blir sendt ut til brukaren når brukaren blir oppretta. E-posten inneheld ei lenkje som tar den til verifiseringsida, som sender ein forespørsel til endepunktet. Planen er at lenkja skal ha ID-en til brukaren og ein eingongskode som ein Query String. Då vil den sjå ut noko slik: `https://eksempelnettside.no/verifisering.html?id=int&eingongskode=string`.
+Det siste endepunktet i REST-API-et er at ein brukar skal kunne verifisere seg. Då er planen at ein e-post blir sendt ut til brukaren når brukaren blir oppretta. E-posten inneheld ei lenkje som tar den til verifiseringsida, som sender ein forespørsel til endepunktet. Planen er at lenkja skal ha ID-en til brukaren og ein eingongskode som ein Query String. Då vil den sjå ut noko slik: `https://eksempelnettside.no/verifisering/?id=int&eingongskode=string`.
 
 > Ein Query String er ein måte å sende data med ein URL. Den fungerer slik at bak nettadressa kjem det eit `?` med noko tekst bak. Den har syntaxen `?parameterNamn=parameterVerdi`. Du kan og legge på fleire parameter med eit `&` bak parameterverdien fulgt av fleire parameter.
 
@@ -843,11 +861,52 @@ $dbh->query(
 
 Den brukar `REFERENCES brukarkontoar (id)` for å kople seg opp mot brukarkontoen med den ID-en. Dette blir kalla ein Foreign Key.
 
-> //TODO forklar Foreign Key
+> Ein Foreign Key er ei kolonne eller ei gruppe av kolonner i ein tabell som refererer til ein primærnøkkel i ein annan tabell. Foreign Keys brukes for å opprette ein relasjon mellom to tabellar, noko som bidrar til å opprettholde dataintegritet ved å sikre at verdiane i den refererande tabellen matcher verdiane i den refererte tabellen.
 
 Eg hadde litt problemer når eg sku teste ut endepunktet seinare, då eg ikkje oppdaga at eg hadde kalla tabellen for eingongkodar i staden for eingong**s**kodar. Eg hadde det same problemet med `eingongskode`. Det gjor at eg fekk feilmelding med beskjed om at ein tabell med det namnet ikkje eksisterte. Heldegvis fekk eg fanga det opp raskt og endra det. Hadde eg ikkje det ville det potensielt blitt mykje kode som var avhengig av `eingongkodar`, og å endre det til `eingongskodar` seinare ville vere meir jobb enn det var no.
 
-//TODO dokumenter mer av API-et
+Tilbake i fila for endepunktet legg eg til følgjande kode:
+
+```php
+// Henter eingongskoden frå databasen
+$sth = $dbh->prepare(
+    <<<SQL
+        SELECT eingongskode
+        FROM eingongskodar
+        WHERE
+            brukar_id LIKE ? AND eingongskode LIKE ?
+    SQL
+);
+$sth->execute([$data["id"], $data["eingongskode"]]);
+$eingongskode = $sth->fetch(PDO::FETCH_ASSOC);
+```
+
+Eingongskoden blir henta frå tabellen `eingongskodar`. Det blir sjekka om eingongskoden er den rette med å samanligne brukar_id og eingongskoden.
+
+```php
+// Oppdater at brukaren er verifisert
+        $sth = $dbh->prepare(
+            <<<SQL
+                UPDATE brukarkontoar
+                SET verifisert = 1
+                WHERE id = ?
+            SQL
+        );
+
+        if($sth->execute([$data["id"]])) {
+            // Fjern eingongskoden frå databasen
+            $sth = $dbh->prepare(
+                <<<SQL
+                    DELETE FROM eingongskodar
+                    WHERE eingongskode = ?
+                SQL
+            );
+
+            // Sende melding...
+        }
+```
+
+Når den rette eingongskoden er funne blir `verifisert`-verdien satt til 1 (sann). Eingongskoden blir så sletta frå databasen slik at den ikkje kan bli brukt fleire gonger.
 
 ## Applikasjon og brukargrensesnitt
 
