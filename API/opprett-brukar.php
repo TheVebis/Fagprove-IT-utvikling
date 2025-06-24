@@ -31,6 +31,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit();
     }
 
+    // Sjekk om epost er epost
+
     // Lag databasen om den ikkje finst og få tilgang til den
     require_once "inkluderer/lag-database.php";
 

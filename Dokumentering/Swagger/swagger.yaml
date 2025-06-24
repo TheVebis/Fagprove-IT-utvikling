@@ -4,7 +4,17 @@ info:
     description: API for administrasjon av brukarkontoar
     version: 1.0.0
 servers:
-    - url: https://dittdomene.no/
+    - url: http://localhost:8000/
+
+components:
+    securitySchemes:
+        XToken:
+            type: apiKey
+            name: X_TOKEN
+            in: header
+
+security:
+    - XToken: []
 
 paths:
     /API/oversikt-brukarar.php:
@@ -63,7 +73,7 @@ paths:
                                 - passord
             responses:
                 "201":
-                    description: Brukareb blei oppretta
+                    description: Brukaren blei oppretta
                 "400":
                     description: Ugyldige inputdata
                 "403":
