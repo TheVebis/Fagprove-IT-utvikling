@@ -31,7 +31,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit();
     }
 
-    // Sjekk om epost er epost
+    // Sjekk om epost er i gyldig format
+    if (!filter_var($data["epost"], FILTER_VALIDATE_EMAIL)) {
+        http_response_code(400); // Bad Request
+        echo json_encode(["error" => "E-postadresse må være i gyldig e-post format."]);
+        exit();
+    }
 
     // Lag databasen om den ikkje finst og få tilgang til den
     require_once "inkluderer/lag-database.php";
@@ -79,9 +84,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 mail(
                     "$data[epost]", 
                     "Verifiser brukar", 
-                    "Hei, du har fått ein brukar. Bruk den vedlagte lenkja for å verifisere deg. https://fagprove.no/verifisering/?id=$brukar_id[id]&eingongskode=$kode"
+                    "Hei, du har fått ein brukar. Bruk den vedlagte lenkja for å verifisere deg. http://localhost:8000/verifisering/?id=$brukar_id[id]&eingongskode=$kode"
                 );
-                echo json_encode(["message" => "Brukar oppretta.", "mail" => "https://fagprove.no/verifisering/?id=$brukar_id[id]&eingongskode=$kode"]);
+                echo json_encode(["message" => "Brukar oppretta.", "mail" => "http://localhost:8000/verifisering/?id=$brukar_id[id]&eingongskode=$kode"]);
             }
         } else {
             http_response_code(500); // Internal Server Error

@@ -984,6 +984,7 @@ input {
 form {
 	padding: 0.5em;
 	background-color: lightgrey;
+	max-width: 400px;
 }
 
 .flex-column {
@@ -1012,10 +1013,11 @@ Eg har satt at element med `button`-, `select`- og `input`-tagganne skal ha ein 
 form {
 	padding: 0.5em;
 	background-color: lightgrey;
+	max-width: 400px;
 }
 ```
 
-Eg har gitt skjemaet `padding`, som gjer at element inni formen blir dytta innover i element, vekk frå kanten. Eg har og gitt ein bakgrunnsfarge for å visualisere kva element som høyrer til skjemaet.
+Eg har gitt skjemaet `padding`, som gjer at element inni formen blir dytta innover i element, vekk frå kanten. Eg har og gitt ein bakgrunnsfarge for å visualisere kva element som høyrer til skjemaet. For at skjemaet ikkje skal strekke seg over heile skjermen har eg satt ein maksimum vidde på 400 pikslar. Det gir meir enn nok plass til innhaldet og er cirka vidden på mobiltelefonar, så det ser likt ut på alle enheter.
 
 ```css
 .flex-column {
@@ -1326,13 +1328,13 @@ if ($sth->execute([$brukar_id["id"], $kode])) {
     mail(
         "$data[epost]",
         "Verifiser brukar",
-        "Hei, du har fått ein brukar. Bruk den vedlagte lenkja for å verifisere deg. https://fagprove.no/verifisering/?id=$brukar_id[id]&eingongskode=$kode"
+        "Hei, du har fått ein brukar. Bruk den vedlagte lenkja for å verifisere deg. https://localhost:8000/verifisering/?id=$brukar_id[id]&eingongskode=$kode"
     );
-    echo json_encode(["message" => "Brukar oppretta.", "mail" => "https://fagprove.no/verifisering/?id=$brukar_id[id]&eingongskode=$kode"]);
+    echo json_encode(["message" => "Brukar oppretta.", "mail" => "http://localhost:8000/verifisering/?id=$brukar_id[id]&eingongskode=$kode"]);
 }
 ```
 
-`rand(100000, 999999)` genererer eit tilfeldeg heiltal på 6 siffer som skal fungere som eingongskoden. Skriptet hentar så ID-en til brukaren slik at den kan bli brukt som referanse for eingongskoden i databasen. Begge deler blir lagt inn i databasen. Viss det var vellukka blir ein mail sendt ut til e-postadressa til den nyoppretta brukaren. Sidan mail ikkje fungerer slik det skal legg eg og lenkja i meldinga som blir sendt tilbake slik at eg kan teste at det fungerer. `fagprove.no` er berre brukt som eit eksempeldomene som tar plassen sidan eg ikkje har brukt eit domene.
+`rand(100000, 999999)` genererer eit tilfeldeg heiltal på 6 siffer som skal fungere som eingongskoden. Skriptet hentar så ID-en til brukaren slik at den kan bli brukt som referanse for eingongskoden i databasen. Begge deler blir lagt inn i databasen. Viss det var vellukka blir ein mail sendt ut til e-postadressa til den nyoppretta brukaren. Sidan mail ikkje fungerer slik det skal legg eg og lenkja i meldinga som blir sendt tilbake slik at eg kan teste at det fungerer.
 
 ### Brukagrensesnitt
 
@@ -1623,5 +1625,34 @@ Då får eg dette brukargrensesnittet her som fint visualiserer endepunktet:
 ![Swagger UI](Bilder/swagger.png)
 
 # Tysdag
+
+## Pass på at e-post er gyldig
+
+Sidan e-postadressa blir brukt til å sende ut lenkje til validering er det viktig at e-postadressa som blir lagt inn faktisk er i gyldig format. Dette kan ein sjekke med `filter_var()` i PHP. Eg legg inn e-postadressa som er sendt inn og filteret `FILTER_VALIDATE_EMAIL` for å sjekke at det er rett i rett format. Om e-posten ikkje er gyldig blir det sendt ein feilmelding.
+
+```php
+// Sjekk om epost er i gyldig format
+if (!filter_var($data["epost"], FILTER_VALIDATE_EMAIL)) {
+    http_response_code(400); // Bad Request
+    echo json_encode(["error" => "E-postadresse må være i gyldig e-post format."]);
+    exit();
+}
+```
+
+Denne koden blir lagt til i endepunktet for oppretting av brukar.
+
+## Test av applikasjon
+
+Eg skal utføre ein test av applikasjonen for å sjekke at den og API-et virker som den skal. Eg planlegg å køyre tre testar:
+
+-   Ein som administrator der eg oppretter ein brukar, henter oversikt over alle brukarar, endrer passord på brukaren, og til slutt sletter brukaren.
+-   Ein som ny brukar som har fått tilsendt ein verifiseringsmail, verifiserer seg, og endrer passordet sitt.
+-   Ein som ein brukar utan tilgong, som prøver å få uautorisert tilgong.
+
+Målet med desse testane er å demonstrere korleis applikasjonen fungerer for ulike brukarar og kva funksjonalitet den har. Den er og meint for å finne svakheiter i koden som evntuelle angriparar vil prøve å utnytte.
+
+## Brukarveiledning
+
+//TODO readme.md
 
 //Skrive litt om feilsøking?

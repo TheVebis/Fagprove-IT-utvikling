@@ -13,6 +13,7 @@ input {
 form {
 	padding: 0.5em;
 	background-color: lightgrey;
+	max-width: 400px;
 }
 
 table {

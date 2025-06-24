@@ -137,4 +137,7 @@
 | 08:20 - 08:50    | Sette opp Swagger med lokalt                                                            |
 | 08:50 - 09:05    | Dokumentere Swagger                                                                     |
 | 09:05 - 09:10    | Hente kakao                                                                             |
-| 09:10 -          | Dokumentere Swagger                                                                     |
+| 09:10 - 10:20    | Dokumentere Swagger                                                                     |
+| 10:20 - 10:25    | Kort pause                                                                              |
+| 10:25 - 10:30    | Publisere GitHub repository                                                             |
+| 10:30 - 10:40    | Sette inn maks vidde på skjemaet                                                        |
