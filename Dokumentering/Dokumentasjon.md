@@ -1524,9 +1524,103 @@ Med alt dette får vi då ein tabell som ser slik ut:|
 
 ![Tabell](Bilder/tabell.png)
 
-## Swagger dokumentasjon
+## Swagger-dokumentasjon
 
-//TODO
+Swagger er eit open-source rammeverk og spesifikasjonar for å beskrive, bygge, dokumentere og bruke REST-API-er. Det gir utviklarar verktøya dei treng fro å enkelt lage og forstå API-er. Swagger spesifikajonen gir ein standarisert måte å beskrive API-er på. Den bruker OpenAPI Specification (OAS) format som er basert på JSON eller YAML, og inneheld all informasjon om API-et som endepunkt, HTTP-metodar, parameterbeskrivingar, forventa svar og feilkodar og meldingar.
+
+Swagger gjør det enkelt å generere dokumentasjon for API-er. Når utviklarar skriver spesifikasjonen kan det automatisk genereras ein interaktiv dokumentasjon som brukarar kan navigere i og teste direkte gjennom eit web-grensesnitt. Dette kan være nyttig for både API-utviklarar og klientar som ønsker å forstå korleis API-et fungerer.
+
+Swagger UI er et av dei mest kjente verktøyet i Swagger-økosystemet. Det gir eit visuellt og interaktivt grensesnitt der brukarar kan utforske API-et, sjå tilgjengelige metodar og teste forespørslane direkte. Dette gjør det enklare for utviklarar og andre interesserte å forstå API-et utan å måtte dukke inn i kildekoden.
+
+Eg har lagt til Swagger på sida for å dokumentere og visualisere korleis API-et fungerer. Med å laste ned Swagger UI frå Swagger sin GitHub og legge den til får eg eit raskt og enkelt brukargrensesnitt med oversikt over alle endepunkta, korleis ein brukar dei og dei ulike svara ein kan få. For å få dette brukargrensesnittet må eg konfigurere ei
+
+Eg har brukt ei YAML-fil for å generere Swagger-dokumentasjonen. Det er mykje informasjon i den og eg skal ikkje gå gjennom heile, men eg skal forklare kva koden gjer og korleis koden ser ut for eit av endepunkta.
+
+```yaml
+openapi: 3.0.0
+info:
+    title: Brukar API
+    description: API for administrasjon av brukarkontoar
+    version: 1.0.0
+servers:
+    - url: http://localhost:8000/
+
+components:
+    securitySchemes:
+        XToken:
+            type: apiKey
+            name: X_TOKEN
+            in: header
+
+security:
+    - XToken: []
+
+paths: // Her kjem endepunkta
+```
+
+`openapi` angir kva versjon av OpenAPI-spesifikasjonen som blir brukt.
+
+Under `info` blir metadata om API-et lagt til. Underkatergoriane her er tittel, beskrivelse og versjon av API-et. Denne informasjonen blir vist øvst på Swagger-sida.
+
+`servers` er kva serverar API-et er tilgjengelig på. Her er det berre definert `localhost`, då eg køyrer API-et lokalt.
+
+Under `components` er det lagt til eit sikkerheitsskjema. I dei fleste endepunkta treng ein å ha vedlagt ein token for å verifisere at ein har tilgang til endepunkta. Det blir lagt til her, slik at ein kan teste API-et om ein har tokenen. Skjemaet `XToken` har typen `apiKey` for å vise at det er ein API-nøkkel, namnet `X_TOKEN` då det er det som er definert i API-et og blir lagt til i headeren.
+
+`security` spesifiserer at `XToken` er nødvendeg for endepunkta i foresørselen. Brukaren vil få opp eit felt i Swagger-dokumentasjonen for å legge dette til.
+
+Under `paths` vil dei ulike endepunkta kome med sine beskrivelsar og parameter. Eg skal demonstrere med endepunktet for å opprette brukar.
+
+```yaml
+/API/opprett-brukar.php:
+    post:
+        summary: Opprett ein ny bruker
+        description: Oppretter ein ny brukerkonto.
+        requestBody:
+            required: true
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            epost:
+                                type: string
+                                example: "brukar@eksempel.com"
+                            passord:
+                                type: string
+                                example: "sikkertPassord"
+                        required:
+                            - epost
+                            - passord
+        responses:
+            "201":
+                description: Brukaren blei oppretta
+            "400":
+                description: Ugyldige inputdata
+            "403":
+                description: Ugyldig token
+            "500":
+                description: Serverfeil
+```
+
+`/API/opprett-brukar.php` er banen til endepunktet ut i frå serveren som er angitt tidligare i koden. Den komplette banen her vil bli `http://localhost:8000/API/oversikt-brukarar.php`.
+
+`post` indikerer at denne banen er til `POST`-metoden. Som sagt tidlegare blir post brukt til å sende data til server og opprette nye ressursar. Ein kan ha fleire HTTP-metodar under ein bane så lenge dei er forskjellege, som `put` og `delete` under `/API/administrer-brukar.php`.
+
+`summary` gir ein kort oppsummering av kva endepunktet gjer, mens `description` gir ein litt meir detaljert beskriving av funksjonen til endepunktet.
+
+Å opprette brukar treng ein `requestBody` då ein skal legge til ein brukarkonto ut i frå innhaldet i kroppen. Den er satt `required` til sann då den er nødvendeg for å kunne sende forespørselen.
+
+Inni `content` blir innhaldet definert. `application/json` spesifiserer at innhaldet skal være i JSON-format. `schema` definerer strukturen for JSON-en.
+
+Innhaldet er eit `object` definert av typen. `properties` definerer kva eigenskaper, eller felt, som objektet kan ha. Her er det lagt til `epost` og ` passord` då det er dei felta som trengst for å opprette ein brukar. Eigenskapane er og gitt ein type og eit eksempel som kan hjelpe brukaren å forstå kva som er meininga å putt inn der.
+
+`responses` angir kva svar klienten kan forvente å få frå serveren. Kvart svar har ein statuskode og ei beskriving om kva som har skjedd. `201`er responskoden for "Created", då det gir beskjed om at brukaren er blit oppretta.
+
+For å legge til Swagger UI gjekk eg inn på [GitHub-sida for Swagger UI](https://github.com/swagger-api/swagger-ui), gjekk inn på siste versjon og lasta ned zip-fila. Etter å ha pakka den ut gjekk eg inn i dist-mappa og kopierte innhaldet der inn i mappe strukturen. I `swagger-initializer.js` måtte eg endre `url` til banen til YAML-fila mi.
+
+Då får eg dette brukargrensesnittet her som fint visualiserer endepunktet:
+
+![Swagger UI](Bilder/swagger.png)
 
 # Tysdag
 

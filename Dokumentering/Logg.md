@@ -133,3 +133,8 @@
 | 21:55 - 22:10    | Hjelpe Mats Larsen med fagprøve (oppsett av møterom)                                    |
 | 22:10 - 22:30    | Dokumentere CSS for tabell                                                              |
 | **Tysdag 24.6**  |
+| 08:00 - 08:20    | Starte dagen                                                                            |
+| 08:20 - 08:50    | Sette opp Swagger med lokalt                                                            |
+| 08:50 - 09:05    | Dokumentere Swagger                                                                     |
+| 09:05 - 09:10    | Hente kakao                                                                             |
+| 09:10 -          | Dokumentere Swagger                                                                     |
