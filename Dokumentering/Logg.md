@@ -143,4 +143,4 @@
 | 10:30 - 10:40    | Sette inn maks vidde på skjemaet                                                        |
 | 10:40 - 11:30    | Dokumentere og planlegge test                                                           |
 | 11:30 - 12:00    | Lunsj                                                                                   |
-| 12:00 -          | Utføre test                                                                             |
+| 12:00 -          | Utføre og dokumentere test                                                              |

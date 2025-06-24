@@ -1651,6 +1651,10 @@ Eg skal utføre ein test av applikasjonen for å sjekke at den og API-et virker 
 
 Målet med desse testane er å demonstrere korleis applikasjonen fungerer for ulike brukarar og kva funksjonalitet den har. Den er og meint for å finne svakheiter i koden som evntuelle angriparar vil prøve å utnytte.
 
+> Knappen "Bytt rolle" er tilstades på sida for testårsakar. Faktisk ute i produksjon ville jo ikkje den vert der.
+>
+> Som forklart tidligare er det ikkje noko innlogging på denne sida, og derfor inga måte å sette brukar på ut i frå det. Dette gjer jo at sida ikkje er sikker, men det er opp til dei som skal ta i bruk dette systemet å innføre sitt eige innloggingsystem. På HVL brukar vi Microsoft-innlogging, og viss vi sku tatt i bruk dette systemet ville det vært naturleg å innplementere det. Det blir då unaturleg å ha eige innlogging på denne sida.
+
 ### Utførelse
 
 #### Administrator
@@ -1707,6 +1711,36 @@ Eg får beskjed om at denne ikkje-eksisterande brukaren er sletta. Det er litt u
 Eg vil fortsatt slette den faktiske brukaren `test@fagprove.no`, så eg skriv det inn i feltet og sender inn. Eg får beskjed om at brukaren er sletta, og eg sjeker tabellen igjen og sjår at det er den.
 
 ![Tabell](Bilder/Test_10.png)
+
+Då var eg ferdig å teste som administrator. Eg er ikkje fornøyd med kor mange hòl eg fann i koden min. Eg var jo klar over at det ikkje var noko sjekk på "Gjenta passord", men at e-post ikkje kan ha spesiallkarakterar og at ein kan slette ikkje-eksisterande brukarar var eg ikkje klar over. Eg må sjå om eg får tid til å fikse desse feila.
+
+#### Brukar
+
+Ein administrator har oppretta ein brukar for `brukar@fagprøve.no` som har fått ein epost med denne lenkja: `http://localhost:8000/verifisering/?id=3&eingongskode=727273`. Eg skal no gå gjennom korleis det vil sjå ut for ein brukar å verifisere seg og endre passordet sitt.
+
+Viss brukaren gløymer ein del av adressa, tildømes eingongskoden, vil den få denne skjermen når ein prøver å verifisere seg:
+
+![Eingongskode påkrevd](Bilder/Test_11.png)
+
+Sku brukaren legge inn feil eingongskode eller ID vil ein få beskjed om at ein har ugyldig eingongskode eller ID.
+
+![Ugyldig](Bilder/Test_12.png)
+
+Dette er jo ikkje ting som skal skje fordi det er meint at brukaren berre skal trykke på lenkja dei får i e-post og bli tatt direkte til sida der ein blir verifisert.
+
+![Verifisert](Bilder/Test_13.png)
+
+Då blir brukaren tatt med vidare til hovudsida og vil no dukke opp som verifisert i databasen.
+
+Neste brukaren skal gjere er å endre passordet sitt. For å gjere dette sjølv må brukaren huske det gamle passordet sitt som ein verifisering på at dei er den dei seier dei er. Brukaren blir møtt av skjemaet for å endre passord og får ikkje moglegheita til å bytte handling. Brukaren fyller ut felta sine, men gløymer å legge inn det gamle passordet. Dei får då beskjed om å fylle ut det feltet sidan det er satt som `required` og må fyllast ut for å kunne sende inn skjemaet.
+
+![Fyll ut](Bilder/Test_14.png)
+
+Brukaren fyller så ut det gamle passordet sitt i tillegg til det nye passordet, og får då endra passordet sitt.
+
+![Passord satt](Bilder/Test_15.png)
+
+Dette er det vanlege brukarar kan gjere i denne applikasjonen. Sidan målet er administrering av brukarar er jo det realistisk at brukarar ikkje har så mykje handlingar utover å endre passord.
 
 ## Brukarveiledning
 
