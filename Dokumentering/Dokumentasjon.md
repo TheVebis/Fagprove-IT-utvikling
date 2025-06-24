@@ -1770,8 +1770,10 @@ Eg vil sei testen var ein suksess. Sjølv om det var nokon "bugs" og hòl i kode
 
 Angrepet mitt på applikasjonen var og mislukka, noko som eg sjår på som ein suksess. At angriparar ikkje får tilgong til API-et betyr at eg har sikra koden på ein god måte.
 
-## Brukarveiledning
+# Vedlegg
 
-//TODO readme.md
+[Timelogg](Logg.md)
 
-//Skrive litt om feilsøking?
+[Brukarveiledning](../readme.md)
+
+GitHub repository for heile prosjektet: [https://github.com/TheVebis/Fagprove-IT-utvikling](https://github.com/TheVebis/Fagprove-IT-utvikling)
