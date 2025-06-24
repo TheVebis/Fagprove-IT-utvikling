@@ -1,7 +1,5 @@
 const queryString = new URLSearchParams(window.location.search);
 
-console.log(Object.fromEntries(queryString.entries()));
-
 fetch("../API/verifiser-brukar.php", {
 	method: "PUT",
 	headers: {

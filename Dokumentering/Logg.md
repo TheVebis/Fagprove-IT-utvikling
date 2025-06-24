@@ -122,3 +122,14 @@
 | 16:30 - 17:20    | Dokumentere dynamisk skjema                                                             |
 | 17:20 - 17:30    | Kort pause                                                                              |
 | 17:30 - 18:10    | Dokumentere om det å jobbe heimefrå                                                     |
+| 18:10 - 19:30    | Dokumentere verifisering                                                                |
+| 19:30 - 19:45    | Kort pause                                                                              |
+| 19:45 - 20:00    | Dokumentere brukargrensesnitt til verifisering                                          |
+| 20:00 - 20:20    | Tur på butikken                                                                         |
+| 20:20 - 20:35    | Dokumentere JavaScript for verifisering                                                 |
+| 20:35 - 21:00    | Dokumentere svar frå serveren                                                           |
+| 21:00 - 21:15    | Hjelpe Mats Larsen med fagprøve (oppsett av møterom)                                    |
+| 21:15 - 21:55    | Dokumentere tabell for oversikt brukarar                                                |
+| 21:55 - 22:10    | Hjelpe Mats Larsen med fagprøve (oppsett av møterom)                                    |
+| 22:10 - 22:30    | Dokumentere CSS for tabell                                                              |
+| **Tysdag 24.6**  |

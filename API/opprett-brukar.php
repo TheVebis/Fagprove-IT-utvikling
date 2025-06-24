@@ -49,8 +49,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if($sth->execute([$data["epost"], $hash])) {
             http_response_code(201); // Created
 
-            // Opprette eingongskode
-            $kode = rand(100000,999999);
+            // Oppretter eingongskode med eit tilfeldeg 6-sifra tal
+            $kode = rand(100000, 999999);
 
             // Hente ID-en til brukaren
             $sth = $dbh->prepare(

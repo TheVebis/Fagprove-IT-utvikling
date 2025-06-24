@@ -1200,7 +1200,7 @@ const nyttPassord = document.getElementById("nyttPassord");
 const gjentaPassord = document.getElementById("gjentaPassord");
 ```
 
-Først henter funksjonen dei relevante elementa som skal brukast i funksjonen. Sidan vi berre er interresert i verdien til nedtrekksmenyen `handling` treng vi berre å hente ut `value`.
+Først henter funksjonen dei relevante elementa som skal brukast i funksjonen. Sidan vi berre er interessert i verdien til nedtrekksmenyen `handling` treng vi berre å hente ut `value`.
 
 ```js
 // Gøymer alle felta
@@ -1289,16 +1289,245 @@ Før eg vurderer å jobbe heime oftare, vil eg derfor sjå på måtar å minimer
 
 # Måndag 23.6
 
-//TODO Skrive om oppdatert endepunkt
+## Verifisering av brukar
 
-//TODO Brukargrensesnitt for verifisering
+Til no har eg satt opp endepunktet for å håndtere verifisering av brukar med eingongskode, men eg har endå ikkje ein måte å lage og sende ut denne koden eller eit brukargrensesnitt for dette. Det er det eg skal lage no.
 
-//TODO Legge til svar frå endepunkt i sida
+### Oppdatert endepunkt
 
-//TODO tabell for oversikt-brukarar
+I endepunktet for å opprette ein brukar legg eg ved følgande kode etter brukaren blir oppretta. Den generer ein eingongskode, legg den inn i databasen og sender ut ein e-post til brukaren om dette. Eller vertfall i teorien. Grunna eg ikkje har endepunktet på ein server med e-post-funksjon vil ikkje `mail()` sende ut nokon e-post. Eg har allikevel tatt det med i koden då det er meininga at den skal bli brukt slik.
 
-//TODO Begrense alternativa for vanlege brukarar
+```php
+// Oppretter eingongskode med eit tilfeldeg 6-sifra tal
+$kode = rand(100000, 999999);
 
-//TODO CSS for tabell
+// Hente ID-en til brukaren
+$sth = $dbh->prepare(
+    <<<SQL
+        SELECT id
+        FROM brukarkontoar
+        WHERE
+            epost LIKE ?
+    SQL
+);
+$sth->execute([$data["epost"]]);
+$brukar_id = $sth->fetch(PDO::FETCH_ASSOC);
 
-//TODO Swagger-dokumentasjon
+// Legg eingongskoden inn i databasen
+$sth = $dbh->prepare(
+    <<<SQL
+        INSERT INTO eingongskodar (brukar_id, eingongskode)
+        VALUES (?, ?)
+    SQL
+);
+if ($sth->execute([$brukar_id["id"], $kode])) {
+    // Send mail
+    // mail() fungerer ikkje utan server men er tatt med likevell for å demonstrere konseptet.
+    mail(
+        "$data[epost]",
+        "Verifiser brukar",
+        "Hei, du har fått ein brukar. Bruk den vedlagte lenkja for å verifisere deg. https://fagprove.no/verifisering/?id=$brukar_id[id]&eingongskode=$kode"
+    );
+    echo json_encode(["message" => "Brukar oppretta.", "mail" => "https://fagprove.no/verifisering/?id=$brukar_id[id]&eingongskode=$kode"]);
+}
+```
+
+`rand(100000, 999999)` genererer eit tilfeldeg heiltal på 6 siffer som skal fungere som eingongskoden. Skriptet hentar så ID-en til brukaren slik at den kan bli brukt som referanse for eingongskoden i databasen. Begge deler blir lagt inn i databasen. Viss det var vellukka blir ein mail sendt ut til e-postadressa til den nyoppretta brukaren. Sidan mail ikkje fungerer slik det skal legg eg og lenkja i meldinga som blir sendt tilbake slik at eg kan teste at det fungerer. `fagprove.no` er berre brukt som eit eksempeldomene som tar plassen sidan eg ikkje har brukt eit domene.
+
+### Brukagrensesnitt
+
+Lenkja som brukaren får i e-post skal føre til ei side som verifiserer dei. Denne sida treng ikkje særleg mykje element eller stil, sidan det berre er eit midlertidig punkt mens brukaren blir verifisert. Det er noko interessant JavaScript som eg skal forklare etter på.
+
+```html
+<!DOCTYPE html>
+<html lang="nn">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Verifisering</title>
+		<link rel="stylesheet" href="../style.css" />
+	</head>
+	<body>
+		<h1>Verifisering</h1>
+		<script src="verifisering.js"></script>
+	</body>
+</html>
+```
+
+JavaScriptet tar Query Stringen frå URL-en som er lagt med i lenkja og sender dei med fetch-kallet til endepunktet. Når brukaren er verifisert sender den brukaren vidare til hovudsida, som i dette tilfellet er skjema-sida.
+
+```js
+const queryString = new URLSearchParams(window.location.search);
+
+fetch("../API/verifiser-brukar.php", {
+	method: "PUT",
+	headers: {
+		"content-type": "application/json",
+	},
+	body: JSON.stringify(Object.fromEntries(queryString.entries())),
+})
+	.then((svar) => {
+		return svar.json();
+	})
+	.then((svar) => {
+		if (svar.message) {
+			const p = document.createElement("p");
+			p.innerText =
+				svar.message + " Sida vil bli viderekopla om få sekund.";
+			document.body.appendChild(p);
+			setTimeout(() => window.location.replace("../"), 5000);
+		}
+		if (svar.error) {
+			const p = document.createElement("p");
+			p.innerText = svar.error;
+			p.style.color = "red";
+			document.body.appendChild(p);
+		}
+	});
+```
+
+`new URLSearchParams` returner eit objekt frå Query Stringen i URL-en som eg vil sende i fetch-kallet. Men før det må eg gjere det om med `Object.fromEntries(queryString.entries())` for å få eit vanleg objekt. Dette kan eg då sende som JSON med `JSON.stringify()`.
+
+Etter å ha gjort svaret om til JSON med `svar.json()` kan skriptet vise kva melding som kom tilbake. Det legg og på ein beskjed om at sida blir viderekopla om få sekund. Med `setTimeout()` kan skriptet køyre ein funksjon etter ei gitt tid. Her køyrer den ein pilfunksjon som sender ein til hovudsida med `window.location.replace("../")` etter 5000 millisekund, eller 5 sekund. Den bytter ut den nåverande banen med `../` som tar ein opp eit hakk.
+
+Om det er kommen ein eventuell feilmelding tilbake frå serveren vil den bli vist i raud tekst.
+
+## Vise svar frå endepunkt
+
+I brukargrensesnittet for verifisering av brukar blir meldinga frå serveren lagt til for å gi brukaren ein bekreftelse på at verifiseringen blei utført, eller kvifor den ikkje blei det. Det same kan ein gjer med dei andre endepunkta. Koden blir veldig lik, berre utan at ein blir viderekopla.
+
+```js
+const svarMelding = document.getElementById("svarMelding");
+
+/* Kode for fetching... */
+
+if (svar.message) {
+	svarMelding.innerText = svar.message;
+	svarMelding.style.color = "black";
+}
+if (svar.error) {
+	svarMelding.innerText = svar.error;
+	svarMelding.style.color = "red";
+}
+```
+
+Eg har lagt til `<p id="svarMelding"></p>` i HTML-en, slik at Javascriptet kan finne den og endre teksten i den ut i frå kva melding som kjem frå serveren. I motsetning til å legge til ein ny melding kvar gong blir den same teksten endra, noko som hindrar at det blir mange meldingar på rad som fyller opp sida.
+
+### Tabell med brukarar
+
+Endepunktet for oversikt av brukarar returnerer litt meir enn ein melding: den returner og data frå databasen. Denne dataen skal bli vist i ein tabell slik at ein kan lett få ein oversikt av brukarar. Dette er ein litt meir avansert prosess i JavaScript, då ein dynamisk legg til kor mange rader og kolonner ut i frå dataen ein får frå endepunktet.
+
+```js
+// Fjerner eksisterande tabell
+if (document.getElementById("tabell")) {
+	document.body.removeChild(document.getElementById("tabell"));
+}
+```
+
+Først sjekker skriptet etter eksisterande tabell og fjerner den slik at ein ikkje får fleire tabellar om ein klikker fleire gonger på innsending av skjemaet.
+
+```js
+// Lage element til tabellen
+const tabell = document.createElement("table");
+const thead = document.createElement("thead");
+const tr = document.createElement("tr");
+
+tabell.id = "tabell";
+```
+
+Skriptet lager dei ulike delene til tabellen med `document.createElement()`. `tabell` er sjølfe tabellen, `thead` er headeren til tabellen, og `tr` skal bli den første rada i tabellen med kolonnenamna. Tabellen får og ID-en `"tabell"` slik at skriptet kan finne den og slette den om det blir køyrt igjen.
+
+```js
+// Lage tabellheader med alle nøkklane
+for (const [nøkkel, verdi] of Object.entries(svar.data[0])) {
+	const th = document.createElement("th");
+	th.innerText = nøkkel;
+	tr.appendChild(th);
+}
+// Legge tabellheader inn i tabellen
+thead.appendChild(tr);
+tabell.appendChild(thead);
+```
+
+For å lage sjølve cellene i tabell-headeren kan skriptet bruke ein `for`-loop. Sidan `svar.data` er ein array med fleire objekt i seg kan eg legge `[0]` bak for å få det første objektet, og ut i frå det objektet kan vi få nøkklane og verdiane til dataa frå svaret. For-loopen går då gjennom kvart par av nøkkel og verdi og lager ein `th`, ei celle til tabell-headeren, for kvar nøkkel og legg den til rada. Etter å ha gjort det for alle cellene blir rada lagt til i headeren og headeren lagt til i tabellen.
+
+```js
+// Tabell body
+const tbody = document.createElement("tbody");
+
+// Lager ny rad for kvart element
+svar.data.forEach((element) => {
+	const tr = document.createElement("tr");
+
+	// Lager celler for kvar verdi
+	for (const [nøkkel, verdi] of Object.entries(element)) {
+		const td = document.createElement("td");
+		td.innerText = verdi;
+		tr.appendChild(td);
+	}
+
+	tbody.appendChild(tr);
+});
+
+// Legge tabell body inn i tabellen
+tabell.appendChild(tbody);
+
+// Legge tabellen på sida
+document.body.appendChild(tabell);
+```
+
+I tabellkroppen skal det vere fleire rader, ei for kvar brukar. Sidan `svar.data` er ein array kan skriptet loope gjennom det med ein `forEach()`-loop som går gjennom kvar oppføring i arrayen, der `element` representerer oppføringa. Kvar oppføring får si eiga rad, represntert av `tr`. Likt som med headeren går for-loopen gjennom kvart par med nøkklar og verdiar, lager ei celle `td` med verdien, og legg den til rada. Rada blir lagt inn i tabellkroppen og `forEach()`-loopen startar om igjen med neste. Når den er ferdig med alle blir tabell kroppen lagt inn i tabellen og tabellen til slutt lagt til på sida.
+
+#### CSS
+
+Utan CSS ser ikkje tabellen noko særleg fin ut og det er vanskeleg å lese av data frå den. Med CSS blir det straks enklare å sjå kva data høyrer til kor, og tabellen ser mykje betre ut.
+
+```css
+table {
+	border: 2px solid rgb(140 140 140);
+	border-collapse: collapse;
+	font-family: sans-serif;
+	letter-spacing: 1px;
+}
+
+thead {
+	background-color: rgb(228 240 245);
+}
+
+th,
+td {
+	border: 1px solid rgb(160 160 160);
+	padding: 8px 10px;
+}
+
+td:last-of-type,
+td:first-of-type {
+	text-align: center;
+}
+
+tbody > tr:nth-of-type(even) {
+	background-color: rgb(237 238 242);
+}
+```
+
+På sjølve tabellen sett eg ein kant, eller `border`, på 2 pikslar og ein grå farge med `rgb(140 140 140)`. `rgb()` blir brukt til å lage fargar ut i frå andelen raudt, blått og grønt det er i fargen på ein skala frå 0 til 255. Sidan alle verdiane er like og ca. midt mellom 0 og 255 blir fargen grå. Kanten er og satt som solid, i motsettning til stippla eller noko anna. `border-collapse: collapse` gjer at kantane slår seg saman. Hadde dei ikkje det ville kvar enkel celle ha kvar sin kant, noko som får det til å bli dobble kantar som ikkje ser så fint ut. Tekst-fonten blir satt til sans-serif for å passe betre inn med resten av sida, og for å gjer teksten enklare å lese får kvar bokstav eit mellomrom på 1 piksel.
+
+Tabellheaderen får ein lys blå bakgrunnsfarge for å skille den frå resten av tabellen.
+
+Cellene `th`og `td` får ein tynnare, litt lysare kant for at kanten rundt tabellen skal skille seg meir ut. Dei får og `padding`, der sidene er på 10 pikslar og topp og botn er 8 pikslar. Dette er for å gi teksten god plass å puste på.
+
+Cellene i den første og den siste kolonna er tal og sjår betre ut når dei er plassert i midten. Dette kan gjerast med ein `text-align: center`. `first-` og `last-of-type` setter dette på den første og den siste i rada.
+
+For å gjere det enkalre å skille mellom rader kan ein putte ulik bakgrunnsfarge på nokon av radene. Her er det satt ein lys grå farge på annan kvar rad. Med `nth-of-type(even)` får ein det på alle partalsrader. `tbody` satt først fordi det berre skal gjelde på radene i tabellkroppen.
+
+Med alt dette får vi då ein tabell som ser slik ut:|
+
+![Tabell](Bilder/tabell.png)
+
+## Swagger dokumentasjon
+
+//TODO
+
+# Tysdag
+
+//Skrive litt om feilsøking?

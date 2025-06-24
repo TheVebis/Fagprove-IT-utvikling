@@ -16,14 +16,13 @@ form {
 }
 
 table {
-	border-collapse: collapse;
 	border: 2px solid rgb(140 140 140);
+	border-collapse: collapse;
 	font-family: sans-serif;
 	letter-spacing: 1px;
 }
 
-thead,
-tfoot {
+thead {
 	background-color: rgb(228 240 245);
 }
 
