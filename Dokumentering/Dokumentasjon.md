@@ -1742,6 +1742,34 @@ Brukaren fyller så ut det gamle passordet sitt i tillegg til det nye passordet,
 
 Dette er det vanlege brukarar kan gjere i denne applikasjonen. Sidan målet er administrering av brukarar er jo det realistisk at brukarar ikkje har så mykje handlingar utover å endre passord.
 
+#### Uvedkomen
+
+Ein uvedkomen brukar har jo ikkje noko rollem så då har den heller ingen token, og skal i utgangspunktet ikkje ha tilgong til sida, men i dette scenarioet har den fått det. For å simulere dette må eg fjerne ein del ting i koden som er der for test-årsakar, då dette ikkje er ein vanleg test.
+
+Eg sett `rolle` til ingenting, då den uvedkommne ikkje har nokon rolle. Eg tar og vekk tokenane sidan dei ikkje har tilgong til det. Til slutt tar eg vekk `byttRolle()`-funksjonen sidan det heller ikkje skal gå an.
+
+Då prøver eg å trenge meg inn på sida. Blant anna får eg endre handling, då den berre er skjult på klientsida. Eg får og vist alle felta sjølv om dei skal være skjult med å berre endre stilen i klienten
+
+![Uvedkommen](Bilder/Test_16.png)
+
+Eg prøver å hente ut oversikt over alle brukarane, men då eg trykker send inn blir sida berre lasta inn på nytt utan at noko har skjedd. Etter å snoke litt i kjeldekoden ser eg at det stoppar på grunn av `X_TOKEN` krever `adminToken` eller `brukarToken`, men sidan ingen av dei er satt så krasjer programmet.
+
+![Mangler token](Bilder/Test_17.png)
+
+Eg prøver å ta vekk kravet om `X_TOKEN` og sende inn, men får tilbake "Ugyldig førespurnad" når eg sender inn. Det ser ut som serveren blokkerer det sidan det mangler `X_TOKEN`. Då må eg prøve å lage min eigen token. Eg sett `X_TOKEN` til `"minFineToken"` og sjår om det fungerer. Eg får då feilmelding om "Ugyldig token." Det ser ut som serversida er for sikker for dette.
+
+![Ugyldig token](Bilder/Test_18.png)
+
+Eg prøvar ein annan vinkel: å gå rett til `/API/oversikt-brukarar.php`, men her og får eg berre ein feilmelding i JSON-format: `{"error":"Ugyldig f\u00f8re\u00adspurnad"}`. Utan token kjem eg ingen plass.
+
+Med dette konkluderer eg testen min som ein uvedkomen. Etter mine beste hackar evner klarte eg ikkje å trenge gjennom. Sikkerheit med token var rett og slett for sikker for meg. Eg skal ikkje utelukke at andre med meir tid og meir erfaring kunne trengt seg inn, men konklusjonen med denne testen er at sida er sikker nok når ein tar vekk elementa for testing.
+
+## Konklusjon
+
+Eg vil sei testen var ein suksess. Sjølv om det var nokon "bugs" og hòl i koden har eg no fått betre oversikt over kva som må fiksast, og alle problema er ikkje-kritiske feil som koden kan overleve.
+
+Angrepet mitt på applikasjonen var og mislukka, noko som eg sjår på som ein suksess. At angriparar ikkje får tilgong til API-et betyr at eg har sikra koden på ein god måte.
+
 ## Brukarveiledning
 
 //TODO readme.md
